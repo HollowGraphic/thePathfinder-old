@@ -1,0 +1,29 @@
+root = true
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+[Assets/Plugins/**.cs]
+generated_code = true
+
+[Assets/Rewired/**.cs]
+generated_code = true
+
+[Assets/Rewired/Extras/**.cs]
+generated_code = true
+
+[{*.har, *.inputactions, *.json}]
+indent_style = space
+indent_size = 2
+
+[{*.yaml, *.yml}]
+indent_style = space
+indent_size = 2
+
+[*.asmdef]
+indent_style = space
+indent_size = 2
+
+[*.{appxmanifest, asax, ascx, aspx, axaml, build, cg, cginc, compute, cs, cshtml, dtd, hlsl, hlsli, hlslinc, master, nuspec, paml, razor, resw, resx, shader, skin, usf, ush, vb, xaml, xamlx, xoml, xsd}]
+indent_style = space
+indent_size = 4
+tab_width = 4

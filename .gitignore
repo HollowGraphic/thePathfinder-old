@@ -10,7 +10,20 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-# Never ignore Asset meta data
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/.idea.ThePathfinder.iml
+/modules.xml
+/projectSettingsUpdater.xml
+# Datasource local storage ignored files
+/../../../../../../:\Prototypes\ThePathfinder\.idea\.idea.ThePathfinder\.idea/dataSources/
+/dataSources.local.xml
+
+
+# Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
@@ -58,3 +71,36 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+*.log
+.vscode/settings.json
+freeze_log.html
+freeze_log.txt
+/.idea/.idea.ThePathfinder/.idea/
+/.plastic/
+/.vscode/
+/Packages/
+/ProjectSettings/
+/RewiredBackup/
+/UserSettings/
+/oml.class_tags.xml
+/Assets/ConsolePro/
+/Assets/Materials/
+/Assets/Plugins/
+/Assets/Prefabs/
+/Assets/Presets/
+/Assets/Rewired/
+/Assets/Scenes/
+/Assets/Settings/
+/Assets/Shaders/
+/Assets/ConsolePro.meta
+/Assets/Materials.meta
+/Assets/Plugins.meta
+/Assets/Prefabs.meta
+/Assets/Presets.meta
+/Assets/Readme.asset
+/Assets/Readme.asset.meta
+/Assets/Rewired.meta
+/Assets/Scenes.meta
+/Assets/Settings.meta
+/Assets/Shaders.meta
+/Assets/src.meta
