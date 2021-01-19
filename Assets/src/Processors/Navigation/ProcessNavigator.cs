@@ -59,7 +59,7 @@ namespace ThePathfinder.Processors.AI
         {
             foreach (var unit in _navigatorsWithDestination)
             {
-
+//todo: fix this file
                 // if (Time.Current >  cNavigator.lastRepath + cNavigator.repathRate)
                 // {
                 //     cNavigator.lastRepath = Time.Current;
