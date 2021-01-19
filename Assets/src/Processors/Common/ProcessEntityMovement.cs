@@ -29,14 +29,12 @@ namespace ThePathfinder.Processors
 
                 if (cMove.canMove)
                 {
-                    float3 currentPos = entity.transform.position;
-
                     //debug heading
                     Draw.Arrow(entity.transform.localPosition, entity.transform.position + (Vector3) heading.value);
                     var speedFactor = entity.Has<SpeedMod>() ? entity.SpeedModComponent().value : 1;
-                    currentPos += heading.value * entity.MaxSpeedComponent().value *
-                                  speedFactor * delta;
-                    entity.transform.position = currentPos;
+                    entity.transform.position += (Vector3)heading.value * entity.MaxSpeedComponent().value *
+                                                 speedFactor * delta;
+                     
                 }
             }
         }

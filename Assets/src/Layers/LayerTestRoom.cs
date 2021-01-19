@@ -26,13 +26,16 @@ namespace ThePathfinder
             Add<ProcessDestinations>();
             Add<ProcessPathRequest>();
             Add<ProcessNavigator>();
-            Add<ProcessEntityMovement>();
+            Add<ProcessEntityMovement>();//TODO this should happen at the end of a frame?
 
             Add<ProcessCastAbility>();
 
             Add<ProcessVision>();
             Add<ProcessTargetAcquisition>();
             Add<ProcessNavigatorTarget>();
+            ////////////////////////////////////////
+            Add<ProcessInterpolator>();
+           
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.
