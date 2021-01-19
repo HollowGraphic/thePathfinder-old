@@ -104,3 +104,6 @@ freeze_log.txt
 /Assets/Settings.meta
 /Assets/Shaders.meta
 /Assets/src.meta
+/Assembly-CSharp.sublime-workspace
+/testSub.sublime-project
+/testSub.sublime-workspace

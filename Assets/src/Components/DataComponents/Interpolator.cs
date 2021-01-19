@@ -4,24 +4,13 @@ using Unity.IL2CPP.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace ThePathfinder.Components
 {
-    /// <summary>
-    /// Can navigate paths
-    /// </summary>
     [Serializable, HideLabel]
-    public struct Navigator
+    public struct Interpolator
     {
-        [Tooltip("Distance that's used to determine when the entity should start slowing down")]
-        public float breakingDistance;
-        [HideInInspector]
-        public bool navigationComplete;
-        [HideInInspector]
-        public float lastRepath;
-        public float repathRate;
-        
+        public int currentIndex;
     }
 
     #region HELPERS
@@ -31,19 +20,19 @@ namespace ThePathfinder.Components
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
     static partial class Component
     {
-        public const string Navigator = "Game.Source.Navigator";
+        public const string Interpolator = "ThePathfinder.Components.Interpolator";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref Navigator NavigatorComponent(in this ent entity) =>
-            ref Storage<Navigator>.components[entity.id];
+        public static ref Interpolator InterpolatorComponent(in this ent entity) =>
+            ref Storage<Interpolator>.components[entity.id];
     }
 
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    sealed class StorageNavigator : Storage<Navigator>
+    sealed class StorageInterpolator : Storage<Interpolator>
     {
-        public override Navigator Create() => new Navigator();
+        public override Interpolator Create() => new Interpolator();
 
         // Use for cleaning components that were removed at the current frame.
         public override void Dispose(indexes disposed)
