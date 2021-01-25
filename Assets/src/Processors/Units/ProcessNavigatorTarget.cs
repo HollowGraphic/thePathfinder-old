@@ -20,7 +20,7 @@ namespace ThePathfinder.Processors.Units
             {
                 var target = unit.TargetComponent();
                 if (unit.Has<AttackDestination>() && unit.Has<Destination>())
-                    //pop current destination into queue so we can go back to it after we deal with target
+                    //TODO pop current destination into queue so we can go back to it after we deal with target
                     unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
 
                 var unitPos = unit.transform.position;
