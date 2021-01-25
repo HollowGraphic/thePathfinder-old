@@ -107,3 +107,5 @@ freeze_log.txt
 /Assembly-CSharp.sublime-workspace
 /testSub.sublime-project
 /testSub.sublime-workspace
+/ThePathfinder.csproj.DotSettings
+/ThePathfinder.Player.csproj.DotSettings

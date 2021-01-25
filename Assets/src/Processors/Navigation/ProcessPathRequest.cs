@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using BigBiteStudios.Logging;
-using Drawing;
 using Pathfinding;
 using Pixeye.Actors;
 using ThePathfinder.Components;
-using Unity.Mathematics;
 using UnityEngine;
 
-
-namespace ThePathfinder.Processors.AI
+namespace ThePathfinder.Processors.Navigation
 {
-    sealed class ProcessPathRequest : Processor
+    internal sealed class ProcessPathRequest : Processor
     {
         private readonly Group<PathRequest, Navigator> _pathRequesters = default;
 
@@ -18,10 +15,9 @@ namespace ThePathfinder.Processors.AI
         {
             foreach (var requester in _pathRequesters.added)
             {
-                
                 // fire a ray first to see if we can just move in straight line
-                var direction = ((Vector3) requester.DestinationComponent().value - requester.transform.position);
-                if (Physics.Raycast((requester.transform.position + (Vector3.up * .01f)),
+                var direction = (Vector3) requester.DestinationComponent().value - requester.transform.position;
+                if (Physics.Raycast(requester.transform.position + Vector3.up * .01f,
                     direction.normalized, direction.magnitude))
                 {
                     Debug.Log("Calculate path");
@@ -41,21 +37,21 @@ namespace ThePathfinder.Processors.AI
                             if (!p.error)
                             {
                                 Debug.Log(Msg.BuildWatch(" Path N Count ", p.vectorPath.Count.ToString()));
-                                
+
                                 //adjust starting path node
                                 {
-                                    float bestDist = float.PositiveInfinity;
-                                    float bestFactor = 0f;
-                                    int bestIndex = 0;
-                                    
-                                    for (int i = 0; i < p.vectorPath.Count - 1; i++)
+                                    var bestDist = float.PositiveInfinity;
+                                    var bestFactor = 0f;
+                                    var bestIndex = 0;
+
+                                    for (var i = 0; i < p.vectorPath.Count - 1; i++)
                                     {
-                                        float factor =
+                                        var factor =
                                             VectorMath.ClosestPointOnLineFactor(p.vectorPath[i], p.vectorPath[i + 1],
                                                 requester.transform.position);
-                                        Vector3 closest = Vector3.Lerp(p.vectorPath[i], p.vectorPath[i + 1], factor);
+                                        var closest = Vector3.Lerp(p.vectorPath[i], p.vectorPath[i + 1], factor);
 
-                                        float dist = (requester.transform.position - closest).sqrMagnitude;
+                                        var dist = (requester.transform.position - closest).sqrMagnitude;
 
                                         if (dist < bestDist)
                                         {
@@ -64,8 +60,10 @@ namespace ThePathfinder.Processors.AI
                                             bestIndex = i;
                                         }
                                     }
+
                                     Debug.Log(Msg.BuildWatch("Best Index", bestIndex.ToString()));
-                                    p.vectorPath[bestIndex] += (p.vectorPath[bestIndex + 1] - p.vectorPath[bestIndex]).normalized * bestDist;
+                                    p.vectorPath[bestIndex] +=
+                                        (p.vectorPath[bestIndex + 1] - p.vectorPath[bestIndex]).normalized * bestDist;
                                 }
                                 //set the vector path
                                 requester.Get<VectorPath>() = new VectorPath(p.vectorPath);
@@ -78,7 +76,8 @@ namespace ThePathfinder.Processors.AI
                 else //no obstacles in the way, manually set path 
                 {
                     Debug.Log("Straight line path");
-                    requester.Get<VectorPath>().value = new List<Vector3>(){requester.transform.position, requester.DestinationComponent().value};
+                    requester.Get<VectorPath>().value = new List<Vector3>
+                        {requester.transform.position, requester.DestinationComponent().value};
                 }
 
                 // Reset navigator

@@ -1,14 +1,11 @@
 using BigBiteStudios.Logging;
 using Pixeye.Actors;
 using ThePathfinder.Components;
-using ThePathfinder.Components.Authoring;
 using UnityEngine;
-using Component = ThePathfinder.Components.Component;
 
-
-namespace ThePathfinder.Processors.AI
+namespace ThePathfinder.Processors.Navigation
 {
-    sealed class ProcessDestinations : Processor, ITick
+    internal sealed class ProcessDestinations : Processor, ITick
     {
         private readonly Group<Combatant> _group = default;
 

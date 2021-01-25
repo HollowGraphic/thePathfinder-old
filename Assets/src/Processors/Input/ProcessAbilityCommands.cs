@@ -1,80 +1,70 @@
 using BigBiteStudios;
-using Pathfinding.Ionic.Zip;
 using Pixeye.Actors;
 using ThePathfinder.Components;
 using ThePathfinder.Input;
 using UnityEngine;
 
-namespace ThePathfinder.Processors
+namespace ThePathfinder.Processors.Input
 {
-    sealed class ProcessAbiltityCommands : ProcessorInput, ITick
+    internal sealed class ProcessAbilityCommands : ProcessorInput, ITick
     {
         private readonly Group<Combatant, Selected, Abilities> _abilityUnits = default;
         private readonly Group<PointerHover> _entityiesUnderMouse = default;
-        private ent primedAbility;
-        private bool abilityPrimed;
-        public ProcessAbiltityCommands()
+        private bool _abilityPrimed;
+        private ent _primedAbility;
+
+        public ProcessAbilityCommands()
         {
-            primedAbility = Layer.Entity.Create();
+            _primedAbility = Layer.Entity.Create();
         }
 
         public void Tick(float delta)
         {
             //cast only if we have an abiilty primed
-            if (abilityPrimed && player.GetButtonDown(ActionId.Ability_Cast))
+            if (_abilityPrimed && Player.GetButtonDown(ActionId.Ability_Cast))
             {
                 //fill out the required fields before casting
 
                 //set cast location
-                if (primedAbility.Has<CastLocation>())
+                if (_primedAbility.Has<CastLocation>())
                 {
                     this.Log("ability requires location");
-                    primedAbility.CastLocationComponent().value = mouse.GetWorldPosition();
+                    _primedAbility.CastLocationComponent().value = Mouse.GetWorldPosition();
                 }
 
                 //set target
-                if (primedAbility.Has<Target>())
-                {
+                if (_primedAbility.Has<Target>())
                     //there should only be one
                     foreach (var entity in _entityiesUnderMouse)
-                    {
-                        primedAbility.TargetComponent().value = entity;
-                    }
-                }
+                        _primedAbility.TargetComponent().Value = entity;
 
                 this.Log("Casting Ability");
-                primedAbility.Get<Cast>();
-                abilityPrimed = false;
+                _primedAbility.Get<Cast>();
+                _abilityPrimed = false;
                 EnableConflictingInputs();
             }
 
-            if (player.GetButtonUp(ActionId.Ability_Cast))
-            {
-                EnableConflictingInputs();
-            }
+            if (Player.GetButtonUp(ActionId.Ability_Cast)) EnableConflictingInputs();
 
-            
+
             CheckAbilityButton(ActionId.Ability_0);
-            
 
-            if (player.GetButtonDown(ActionId.Ability_Abort))
-            {
+
+            if (Player.GetButtonDown(ActionId.Ability_Abort))
                 //reenable other input
                 EnableConflictingInputs();
-            }
         }
 
         private void CheckAbilityButton(int abilityId)
         {
-            
-            if (player.GetButtonDown(abilityId))
+            if (Player.GetButtonDown(abilityId))
             {
                 this.Log("Ability Key fired");
                 foreach (var unit in _abilityUnits)
                 {
                     this.Log("We have units with abilities");
                     var availableAbilities = unit.Get<Abilities>();
-                    if (availableAbilities.value.TryGetValue(abilityId, out var ability))
+                    if (availableAbilities.Value.TryGetValue(abilityId, out var ability))
                     {
                         if (ability.Has<InstaCast>()) //can we cast it right away?
                         {
@@ -86,8 +76,8 @@ namespace ThePathfinder.Processors
                         {
                             this.Log("Priming Ability");
                             //prime ability. cache it and wait for player to cast
-                            primedAbility = ability;
-                            abilityPrimed = true;
+                            _primedAbility = ability;
+                            _abilityPrimed = true;
                             DisableConflictingInputs();
                         }
                     }

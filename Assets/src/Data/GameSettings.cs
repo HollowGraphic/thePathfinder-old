@@ -1,7 +1,7 @@
-namespace ThePathfinder.Processors.AI
+namespace ThePathfinder
 {
     public static class GameSettings
     {
-        public const int VISIBLE_TARGET_CAPACITY = 20;
+        public const int VisibleTargetCapacity = 20;
     }
 }

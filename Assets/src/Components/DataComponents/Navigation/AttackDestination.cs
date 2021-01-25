@@ -1,15 +1,13 @@
 using System;
 using System.Runtime.CompilerServices;
-using Unity.IL2CPP.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
 
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct PathNavigator
+    public struct AttackDestination
     {
-        public int currentPathNode;
     }
 
     #region HELPERS
@@ -17,21 +15,22 @@ namespace ThePathfinder.Components
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    static partial class Component
+    // ReSharper disable once InconsistentNaming
+    static partial class GameComponent
     {
-        public const string PathNavigator = "ThePathfinder.Components.PathNavigator";
+        public const string AttackDestination = "ThePathfinder.Components.Authoring.AttackDestination";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref PathNavigator PathNavigatorComponent(in this ent entity) =>
-            ref Storage<PathNavigator>.components[entity.id];
+        public static ref AttackDestination AttackDestinationComponent(in this ent entity) =>
+            ref Storage<AttackDestination>.components[entity.id];
     }
 
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    sealed class StoragePathNavigator : Storage<PathNavigator>
+    sealed class StorageAttackDestination : Storage<AttackDestination>
     {
-        public override PathNavigator Create() => new PathNavigator();
+        public override AttackDestination Create() => new AttackDestination();
 
         // Use for cleaning components that were removed at the current frame.
         public override void Dispose(indexes disposed)

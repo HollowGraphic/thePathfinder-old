@@ -1,60 +1,28 @@
-using System.Linq;
 using BigBiteStudios.Logging;
 using Drawing;
 using Pixeye.Actors;
-using Pathfinding;
-using Pathfinding.Util;
 using ThePathfinder.Components;
-using ThePathfinder.Components.Authoring;
 using Unity.Mathematics;
 using UnityEngine;
-using Component = ThePathfinder.Components.Component;
 
-
-namespace ThePathfinder.Processors.AI
+namespace ThePathfinder.Processors.Navigation
 {
-    sealed class ProcessNavigator : Processor, ITick
+    internal sealed class ProcessNavigator : Processor, ITick
     {
+        /// <summary>
+        ///     How far to look for waypoints?
+        /// </summary>
+        private const float NextWaypointDistance = .5f;
+
         //[ExcludeBy(Component.PathRequest)]
         private readonly Group<Navigator, Destination, VectorPath> _navigators = default;
-
-        /// <summary>
-        /// How far to look for waypoints?
-        /// </summary>
-        private const float nextWaypointDistance = .5f;
-
-        public override void HandleEcsEvents()
-        {
-            //get the next destination in the queue
-            foreach (var entity in _navigators.removed)
-            {
-                if (entity.Has<DestinationQueue>() && entity.DestinationQueueComponent().destinations.Count != 0)
-                {
-                    entity.Get<Destination>() = entity.DestinationQueueComponent().destinations.Dequeue();
-                    entity.Get<PathRequest>();
-                }
-                else //no where else to go
-                {
-                    //remove heading so that they stop moving
-                    if (entity.Has<Heading>()) entity.Remove<Heading>();
-                    //remove move type
-                    if (entity.Has<MoveToDestination>()) entity.Remove<MoveToDestination>();
-                    if (entity.Has<AttackDestination>()) entity.Remove<AttackDestination>();
-                    //remove path
-                    entity.Remove<VectorPath>();
-                }
-            }
-        }
 
         public void Tick(float delta)
         {
             foreach (var unit in _navigators)
             {
                 Debug.Log(Msg.BuildWatch("# of Nodes", unit.VectorPathComponent().value.Count.ToString()));
-                foreach (var node in unit.VectorPathComponent().value)
-                {
-                    Draw.CircleXZ(node, .25f, Color.blue);
-                }
+                foreach (var node in unit.VectorPathComponent().value) Draw.CircleXZ(node, .25f, Color.blue);
 
                 // if (Time.Current >  cNavigator.lastRepath + cNavigator.repathRate)
                 // {
@@ -66,9 +34,9 @@ namespace ThePathfinder.Processors.AI
                 float distanceToWaypoint;
                 Heading heading;
                 var destination = unit.DestinationComponent();
-                bool approachingFinalWaypoint = false;
-                
-                VectorPath cVecPath = unit.VectorPathComponent();
+                var approachingFinalWaypoint = false;
+
+                var cVecPath = unit.VectorPathComponent();
 
                 var cNavigator = unit.NavigatorComponent();
                 Debug.Log(Msg.BuildWatch("Current Path Node",
@@ -77,12 +45,12 @@ namespace ThePathfinder.Processors.AI
                 // We do this in a loop because many waypoints might be close to each other and we may reach
                 // several of them in the same frame.
                 while (true)
-                {   
+                {
                     // The distance to the next waypoint in the path
                     distanceToWaypoint = math.distancesq(unit.transform.position,
                         cVecPath.value[cNavigator.currentPathNode]);
                     //navigating vector path
-                    if (distanceToWaypoint < nextWaypointDistance) //approaching next waypoint
+                    if (distanceToWaypoint < NextWaypointDistance) //approaching next waypoint
                     {
                         Debug.Log(Msg.BuildWatch(unit.transform.name, "Close To NextWayPoint"));
 
@@ -112,7 +80,7 @@ namespace ThePathfinder.Processors.AI
                 // Direction to the next waypoint
                 // Normalize it so that it has a length of 1 world unit
                 heading = new Heading(math.normalize(cVecPath.value[cNavigator.currentPathNode] -
-                                       unit.transform.position));
+                                                     unit.transform.position));
 
                 var distance = math.distance(unit.transform.position, destination.value);
 
@@ -137,6 +105,27 @@ namespace ThePathfinder.Processors.AI
                 unit.Get<Heading>() = heading;
                 Draw.Cross(destination.value);
             }
+        }
+
+        public override void HandleEcsEvents()
+        {
+            //get the next destination in the queue
+            foreach (var entity in _navigators.removed)
+                if (entity.Has<DestinationQueue>() && entity.DestinationQueueComponent().destinations.Count != 0)
+                {
+                    entity.Get<Destination>() = entity.DestinationQueueComponent().destinations.Dequeue();
+                    entity.Get<PathRequest>();
+                }
+                else //no where else to go
+                {
+                    //remove heading so that they stop moving
+                    if (entity.Has<Heading>()) entity.Remove<Heading>();
+                    //remove move type
+                    if (entity.Has<MoveToDestination>()) entity.Remove<MoveToDestination>();
+                    if (entity.Has<AttackDestination>()) entity.Remove<AttackDestination>();
+                    //remove path
+                    entity.Remove<VectorPath>();
+                }
         }
     }
 }

@@ -2,56 +2,56 @@ using Pixeye.Actors;
 using Rewired;
 using ThePathfinder.Input;
 
-namespace ThePathfinder.Processors
+namespace ThePathfinder.Processors.Input
 {
     public abstract class ProcessorInput : Processor
     {
-        protected static Mouse mouse;
-        protected static Player player;
-        private int categoryId;
-        
+        protected static Mouse Mouse;
+        protected static Player Player;
+        private readonly int _categoryId;
+
         public ProcessorInput()
         {
-            mouse = ReInput.controllers.Mouse;
-            player = ReInput.players.GetPlayer(Players.Player0);
-            categoryId = SetCategoryId();
+            Mouse = ReInput.controllers.Mouse;
+            Player = ReInput.players.GetPlayer(Players.Player0);
+            // ReSharper disable once VirtualMemberCallInConstructor
+            _categoryId = SetCategoryId();
         }
 
         /// <summary>
-        /// Set the category id that will be used to determine which inputs to disable
+        ///     Set the category id that will be used to determine which inputs to disable
         /// </summary>
         /// <param name="id"></param>
         protected abstract int SetCategoryId();
-        
+
         /// <summary>
-        /// Disables maps that conflict whith this <see cref="ProcessorInput"/> 
+        ///     Disables maps that conflict whith this <see cref="ProcessorInput" />
         /// </summary>
         protected void DisableConflictingInputs()
         {
-        
             EnableMaps(false);
         }
+
         /// <summary>
-        /// Enables maps that conflict whith this <see cref="ProcessorInput"/>
+        ///     Enables maps that conflict whith this <see cref="ProcessorInput" />
         /// </summary>
         protected void EnableConflictingInputs()
         {
             EnableMaps(true);
         }
-        private void EnableMaps( bool enable)
+
+        private void EnableMaps(bool enable)
         {
             //flip flag
-            
-            switch (categoryId)
+
+            switch (_categoryId)
             {
                 case Category.Abiltity_Map:
-                    player.controllers.maps.SetMapsEnabled(enable, Category.Selection);
-                    player.controllers.maps.SetMapsEnabled(enable, Category.Orders);
+                    Player.controllers.maps.SetMapsEnabled(enable, Category.Selection);
+                    Player.controllers.maps.SetMapsEnabled(enable, Category.Orders);
                     break;
                 case Category.Orders:
-                    player.controllers.maps.SetMapsEnabled(enable, Category.Selection);
-                    break;
-                default:
+                    Player.controllers.maps.SetMapsEnabled(enable, Category.Selection);
                     break;
             }
         }

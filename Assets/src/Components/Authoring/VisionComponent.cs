@@ -19,21 +19,17 @@ namespace ThePathfinder.Components.Authoring
             var eyePos = transform.position + (Vector3.up * vision.height);
             if (vision.cone)
             {
-                var right = Quaternion.AngleAxis(vision.angle * .5f, Vector3.up) * transform.forward;
                 float angleRad = vision.angle / 2 * (math.PI / 180);
                 var vecAngleRight = new Vector3(math.sin(angleRad), 0, math.cos(angleRad)) * vision.range + eyePos;
                 var vecAngleLeft = new Vector3(math.sin(-angleRad), 0, math.cos(-angleRad)) * vision.range + eyePos;
-
-                //var left = Quaternion.AngleAxis(-vision.angle, Vector3.up) * transform.forward;
+                
                 using (Draw.InLocalSpace(transform))
                 {
-                    Draw.Line(eyePos, vecAngleRight + transform.position);
-                    Draw.Line(eyePos, vecAngleLeft + transform.position);
+                    var position = transform.position;
+                    Draw.Line(eyePos, vecAngleRight + position);
+                    Draw.Line(eyePos, vecAngleLeft + position);
                 }
-
-                //arc doesnt' render
-                // Draw.Arc(eyePos , vecAngleRight, vecAngleRight);
-                // Draw.Arc(Vector3.zero, Vector3.right, Vector3.left );
+                //TODO render arc
             }
             else
             {

@@ -1,8 +1,6 @@
 using System;
-using UnityEngine;
 using Pixeye.Actors;
-using Sirenix.OdinInspector;
-using Drawing;
+using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring
 {
@@ -22,6 +20,5 @@ namespace ThePathfinder.Components.Authoring
                 isCandidate => OnIsSelectedCandidateChanged(isCandidate));
             entity.layer.Observer.Add(entity, s => s.Has<Selected>(), isSelected => OnSelectedChanged(isSelected));
         }
-
     }
 }

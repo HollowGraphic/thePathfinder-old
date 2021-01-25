@@ -1,9 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
-using Unity.IL2CPP.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace ThePathfinder.Components
@@ -12,8 +10,10 @@ namespace ThePathfinder.Components
     public struct Vision
     {
         public bool cone;
+
         [ShowIf("cone"), LabelText("Width"), Range(0, 360)]
         public float angle;
+
         public float range;
         public float height;
         public LayerMask mask;
@@ -24,7 +24,7 @@ namespace ThePathfinder.Components
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    static partial class Component
+    static partial class GameComponent
     {
         public const string Vision = "ThePathfinder.Components.Vision";
 
