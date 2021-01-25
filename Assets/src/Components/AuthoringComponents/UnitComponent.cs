@@ -13,7 +13,6 @@ namespace ThePathfinder.Components.Authoring
         public override void Set(ref ent entity)
         {
             entity.Set<Unit>();
-
         }
     }
 }

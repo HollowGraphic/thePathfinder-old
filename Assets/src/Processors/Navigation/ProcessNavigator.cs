@@ -67,7 +67,7 @@ namespace ThePathfinder.Processors.AI
                 Heading heading;
                 var destination = unit.DestinationComponent();
                 bool approachingFinalWaypoint = false;
-                
+
                 VectorPath cVecPath = unit.VectorPathComponent();
 
                 var cNavigator = unit.NavigatorComponent();
@@ -77,7 +77,7 @@ namespace ThePathfinder.Processors.AI
                 // We do this in a loop because many waypoints might be close to each other and we may reach
                 // several of them in the same frame.
                 while (true)
-                {   
+                {
                     // The distance to the next waypoint in the path
                     distanceToWaypoint = math.distancesq(unit.transform.position,
                         cVecPath.value[cNavigator.currentPathNode]);
@@ -112,7 +112,7 @@ namespace ThePathfinder.Processors.AI
                 // Direction to the next waypoint
                 // Normalize it so that it has a length of 1 world unit
                 heading = new Heading(math.normalize(cVecPath.value[cNavigator.currentPathNode] -
-                                       unit.transform.position));
+                                                     unit.transform.position));
 
                 var distance = math.distance(unit.transform.position, destination.value);
 

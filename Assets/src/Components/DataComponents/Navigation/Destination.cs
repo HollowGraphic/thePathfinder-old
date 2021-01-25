@@ -14,7 +14,8 @@ namespace ThePathfinder.Components
         {
             value = location;
         }
-         public float3 value;
+
+        public float3 value;
     }
 
     #region HELPERS

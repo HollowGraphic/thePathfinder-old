@@ -16,10 +16,9 @@ namespace ThePathfinder.Components
     {
         [Tooltip("Distance that's used to determine when the entity should start slowing down")]
         public float breakingDistance;
-        [HideInInspector]
-        public bool navigationComplete;
-        [HideInInspector]
-        public float lastRepath;
+
+        [HideInInspector] public bool navigationComplete;
+        [HideInInspector] public float lastRepath;
         public float repathRate;
         public int currentPathNode;
     }

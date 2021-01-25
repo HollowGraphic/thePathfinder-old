@@ -6,20 +6,19 @@ using ThePathfinder.Components;
 
 namespace ThePathfinder
 {
-  public  class GameActor : Actor
+    public class GameActor : Actor
 #if UNITY_EDITOR
    ,IDrawGizmos
-  #endif
-  {
-    protected override void Setup()
+#endif
     {
-      foreach (var component in GetComponents<IComponent>())
-      {
-        component.Set(ref entity);
-        component.RegisterObservers(entity);
-      }
-      
-    }
+        protected override void Setup()
+        {
+            foreach (var component in GetComponents<IComponent>())
+            {
+                component.Set(ref entity);
+                component.RegisterObservers(entity);
+            }
+        }
 
 #if UNITY_EDITOR
 #pragma warning disable
@@ -39,5 +38,5 @@ public GameActor()
     public virtual void DrawGizmos(){}
 
 #endif
-  }
+    }
 }

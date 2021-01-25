@@ -13,7 +13,6 @@ namespace ThePathfinder.Components
         /// The Id used to refer to an ability
         /// </summary>
         public int value;
-        
     }
 
     #region HELPERS

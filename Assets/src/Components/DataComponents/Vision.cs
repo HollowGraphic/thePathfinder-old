@@ -12,8 +12,10 @@ namespace ThePathfinder.Components
     public struct Vision
     {
         public bool cone;
+
         [ShowIf("cone"), LabelText("Width"), Range(0, 360)]
         public float angle;
+
         public float range;
         public float height;
         public LayerMask mask;

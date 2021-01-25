@@ -22,11 +22,11 @@ namespace ThePathfinder
             Add<ProcessUnitSelected>();
             Add<ProcessAbiltityCommands>();
             Add<ProcessMovementOrders>();
-            
+
             Add<ProcessDestinations>();
             Add<ProcessPathRequest>();
             Add<ProcessNavigator>();
-            Add<ProcessEntityMovement>();//TODO this should happen at the end of a frame?
+            Add<ProcessEntityMovement>(); //TODO this should happen at the end of a frame?
 
             Add<ProcessCastAbility>();
 
@@ -35,10 +35,11 @@ namespace ThePathfinder
             Add<ProcessNavigatorTarget>();
             ////////////////////////////////////////
             Add<ProcessInterpolator>();
-           
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.
-        protected override void OnLayerDestroy() { }
+        protected override void OnLayerDestroy()
+        {
+        }
     }
 }

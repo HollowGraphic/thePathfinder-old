@@ -9,7 +9,7 @@ namespace ThePathfinder.Components
     [Serializable, HideLabel]
     public struct Combatant
     {
-        [ PropertyRange(.1f, 100f)] public float attackRange;
+        [PropertyRange(.1f, 100f)] public float attackRange;
     }
 
     #region HELPERS

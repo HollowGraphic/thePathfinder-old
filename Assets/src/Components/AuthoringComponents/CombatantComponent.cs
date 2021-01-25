@@ -8,6 +8,7 @@ namespace ThePathfinder.Components.Authoring
     public class CombatantComponent : AuthoringComponent
     {
         public Combatant combatant;
+
         public override void Set(ref ent entity)
         {
             entity.Set(combatant);

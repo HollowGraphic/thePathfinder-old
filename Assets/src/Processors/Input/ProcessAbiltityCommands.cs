@@ -13,6 +13,7 @@ namespace ThePathfinder.Processors
         private readonly Group<PointerHover> _entityiesUnderMouse = default;
         private ent primedAbility;
         private bool abilityPrimed;
+
         public ProcessAbiltityCommands()
         {
             primedAbility = Layer.Entity.Create();
@@ -53,9 +54,9 @@ namespace ThePathfinder.Processors
                 EnableConflictingInputs();
             }
 
-            
+
             CheckAbilityButton(ActionId.Ability_0);
-            
+
 
             if (player.GetButtonDown(ActionId.Ability_Abort))
             {
@@ -66,7 +67,6 @@ namespace ThePathfinder.Processors
 
         private void CheckAbilityButton(int abilityId)
         {
-            
             if (player.GetButtonDown(abilityId))
             {
                 this.Log("Ability Key fired");

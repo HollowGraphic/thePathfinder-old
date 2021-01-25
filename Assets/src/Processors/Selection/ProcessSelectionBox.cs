@@ -6,103 +6,111 @@ using Pixeye.Actors;
 using UnityEngine;
 using BigBiteStudios;
 using Unity.Mathematics;
+
 #if UNITY_EDITOR
 using Drawing;
 #endif
 namespace ThePathfinder.Processors
 {
-  public sealed class ProcessSelectionBox : ProcessorInput, ITick//, IReceive<StartBoxSelectionCommand>, IReceive<UpdateSelectionBoxCommand>, IReceive<CancelSelectingBoxCommand>
-  {
-    //settings
-    private const float NEAR_DISTANCE = 1f;
-    private const float FAR_DISTANCE = 1000; //how far can we box select?
-    private const float BOX_THRESHOLD = 3;
-    //selection box cache
-    private readonly float3[] _boxPoints = new float3[8]; // selection box corners
-    private readonly Plane[] _planes = new Plane[6]; // selection box planes
-
-    private Vector2 _initialMousePos = default;
-
-    //ecs
-    private readonly Group<Selectable, PointerBounds> _selectables = default;
-    private readonly Group<Commander> _commanders = default;
-
-    protected override void OnDispose()
+    public sealed class
+        ProcessSelectionBox : ProcessorInput,
+            ITick //, IReceive<StartBoxSelectionCommand>, IReceive<UpdateSelectionBoxCommand>, IReceive<CancelSelectingBoxCommand>
     {
-    }
-    public void Tick(float delta)
-    {
-      foreach (var commander in _commanders)
-      {
-        if (player.GetButtonDown(ActionId.Selection_Confirm)) _initialMousePos = mouse.screenPosition;
-        if (player.GetButton(ActionId.Selection_Confirm))
+        //settings
+        private const float NEAR_DISTANCE = 1f;
+        private const float FAR_DISTANCE = 1000; //how far can we box select?
+
+        private const float BOX_THRESHOLD = 3;
+
+        //selection box cache
+        private readonly float3[] _boxPoints = new float3[8]; // selection box corners
+        private readonly Plane[] _planes = new Plane[6]; // selection box planes
+
+        private Vector2 _initialMousePos = default;
+
+        //ecs
+        private readonly Group<Selectable, PointerBounds> _selectables = default;
+        private readonly Group<Commander> _commanders = default;
+
+        protected override void OnDispose()
         {
-          if (!ConstructBoxFromMouse(_initialMousePos, mouse.screenPosition)) return;
+        }
+
+        public void Tick(float delta)
+        {
+            foreach (var commander in _commanders)
+            {
+                if (player.GetButtonDown(ActionId.Selection_Confirm)) _initialMousePos = mouse.screenPosition;
+                if (player.GetButton(ActionId.Selection_Confirm))
+                {
+                    if (!ConstructBoxFromMouse(_initialMousePos, mouse.screenPosition)) return;
 #if UNITY_EDITOR
           DrawCustomBox(_boxPoints);
 #endif
-          UpdateEntitiesInBounds(commander);
+                    UpdateEntitiesInBounds(commander);
+                }
+            }
         }
-      }
-    }
-    private void UpdateEntitiesInBounds(ent commander)
-    {
-      //check if any units are inside the box
-      foreach (var selectable in _selectables)
-      {
-        if (GeometryUtility.TestPlanesAABB(_planes, selectable.PointerBoundsComponent().value.bounds))
+
+        private void UpdateEntitiesInBounds(ent commander)
         {
-          if (!selectable.Has<SelectionCandidate>())
-            selectable.Get<SelectionCandidate>() = new SelectionCandidate(commander);
+            //check if any units are inside the box
+            foreach (var selectable in _selectables)
+            {
+                if (GeometryUtility.TestPlanesAABB(_planes, selectable.PointerBoundsComponent().value.bounds))
+                {
+                    if (!selectable.Has<SelectionCandidate>())
+                        selectable.Get<SelectionCandidate>() = new SelectionCandidate(commander);
+                }
+                else if (selectable.Has<SelectionCandidate>())
+                {
+                    selectable.Remove<SelectionCandidate>();
+                }
+            }
         }
-        else if (selectable.Has<SelectionCandidate>())
-        { selectable.Remove<SelectionCandidate>(); }
-      }
-    }
 
-    /// <summary>
-    ///Construct a selection box
-    /// </summary>
-    /// <param name="initialPos"></param>
-    /// <param name="currentPos"></param>
-    /// <returns>If it successfuly constructed a box</returns>
-    private bool ConstructBoxFromMouse(float2 initialPos, float2 currentPos)
-    {
-      var minPos = math.min(initialPos, currentPos);
-      var maxPos = math.max(initialPos, currentPos);
-      float minX = maxPos.x - minPos.x;
-      float minY = maxPos.y - minPos.y;
+        /// <summary>
+        ///Construct a selection box
+        /// </summary>
+        /// <param name="initialPos"></param>
+        /// <param name="currentPos"></param>
+        /// <returns>If it successfuly constructed a box</returns>
+        private bool ConstructBoxFromMouse(float2 initialPos, float2 currentPos)
+        {
+            var minPos = math.min(initialPos, currentPos);
+            var maxPos = math.max(initialPos, currentPos);
+            float minX = maxPos.x - minPos.x;
+            float minY = maxPos.y - minPos.y;
 
-      bool valid = minX > BOX_THRESHOLD && minY > BOX_THRESHOLD;
-      if (!valid) return valid;
+            bool valid = minX > BOX_THRESHOLD && minY > BOX_THRESHOLD;
+            if (!valid) return valid;
 
-      _boxPoints[2] = new float3(maxPos.x, minPos.y, NEAR_DISTANCE);
-      _boxPoints[0] = new float3(minPos.x, maxPos.y, NEAR_DISTANCE); //near plane
-      _boxPoints[1] = new float3(maxPos.x, maxPos.y, NEAR_DISTANCE);
-      _boxPoints[3] = new float3(minPos.x, minPos.y, NEAR_DISTANCE);
+            _boxPoints[2] = new float3(maxPos.x, minPos.y, NEAR_DISTANCE);
+            _boxPoints[0] = new float3(minPos.x, maxPos.y, NEAR_DISTANCE); //near plane
+            _boxPoints[1] = new float3(maxPos.x, maxPos.y, NEAR_DISTANCE);
+            _boxPoints[3] = new float3(minPos.x, minPos.y, NEAR_DISTANCE);
 
-      //"extrude" our plane away from the camera by 'FarDistance', ending up with a complete box
-      _boxPoints[4] = new float3(_boxPoints[0].x, _boxPoints[0].y, FAR_DISTANCE); //far plane
-      _boxPoints[5] = new float3(_boxPoints[1].x, _boxPoints[1].y, FAR_DISTANCE);
-      _boxPoints[6] = new float3(_boxPoints[2].x, _boxPoints[2].y, FAR_DISTANCE);
-      _boxPoints[7] = new float3(_boxPoints[3].x, _boxPoints[3].y, FAR_DISTANCE);
-      //return boxPoints;
-      TransformBoxFromScreenToWorld(_boxPoints);
+            //"extrude" our plane away from the camera by 'FarDistance', ending up with a complete box
+            _boxPoints[4] = new float3(_boxPoints[0].x, _boxPoints[0].y, FAR_DISTANCE); //far plane
+            _boxPoints[5] = new float3(_boxPoints[1].x, _boxPoints[1].y, FAR_DISTANCE);
+            _boxPoints[6] = new float3(_boxPoints[2].x, _boxPoints[2].y, FAR_DISTANCE);
+            _boxPoints[7] = new float3(_boxPoints[3].x, _boxPoints[3].y, FAR_DISTANCE);
+            //return boxPoints;
+            TransformBoxFromScreenToWorld(_boxPoints);
 
-      return valid;
-    }
+            return valid;
+        }
 
-    private void ConstrucPlanesFromPoints(float3[] points)
-    {
-      //todo: reverse winding
-      var frontace = new[] { points[0], points[1], points[2] };
-      var topFace = new[] { points[4], points[1], points[0] };
-      var rightFace = new[] { points[6], points[2], points[5] };
-      var leftFace = new[] { points[0], points[7], points[4] };
-      var backFace = new[] { points[5], points[4], points[7] };
-      var bottomFace = new[] { points[2], points[6], points[7] };
+        private void ConstrucPlanesFromPoints(float3[] points)
+        {
+            //todo: reverse winding
+            var frontace = new[] {points[0], points[1], points[2]};
+            var topFace = new[] {points[4], points[1], points[0]};
+            var rightFace = new[] {points[6], points[2], points[5]};
+            var leftFace = new[] {points[0], points[7], points[4]};
+            var backFace = new[] {points[5], points[4], points[7]};
+            var bottomFace = new[] {points[2], points[6], points[7]};
 #if UNITY_EDITOR
-
       DrawPlane(Geometry.GetCentroidOfPoints(frontace), -Geometry.GetNormal(frontace));
       DrawPlane(Geometry.GetCentroidOfPoints(topFace), -Geometry.GetNormal(topFace));
       DrawPlane(Geometry.GetCentroidOfPoints(rightFace), -Geometry.GetNormal(rightFace));
@@ -110,28 +118,29 @@ namespace ThePathfinder.Processors
       DrawPlane(Geometry.GetCentroidOfPoints(backFace), -Geometry.GetNormal(backFace));
       DrawPlane(Geometry.GetCentroidOfPoints(leftFace), -Geometry.GetNormal(leftFace));
 #endif
-      _planes[0].SetNormalAndPosition(-Geometry.GetNormal(topFace),
-          Geometry.GetCentroidOfPoints(topFace));
-      _planes[1].SetNormalAndPosition(-Geometry.GetNormal(rightFace),
-          Geometry.GetCentroidOfPoints(rightFace));
-      _planes[2].SetNormalAndPosition(-Geometry.GetNormal(bottomFace),
-          Geometry.GetCentroidOfPoints(bottomFace));
-      _planes[3].SetNormalAndPosition(-Geometry.GetNormal(backFace),
-          Geometry.GetCentroidOfPoints(backFace));
-      _planes[4].SetNormalAndPosition(-Geometry.GetNormal(leftFace),
-         Geometry.GetCentroidOfPoints(leftFace));
-      _planes[5].SetNormalAndPosition(-Geometry.GetNormal(frontace),
-          Geometry.GetCentroidOfPoints(frontace));
-    }
+            _planes[0].SetNormalAndPosition(-Geometry.GetNormal(topFace),
+                Geometry.GetCentroidOfPoints(topFace));
+            _planes[1].SetNormalAndPosition(-Geometry.GetNormal(rightFace),
+                Geometry.GetCentroidOfPoints(rightFace));
+            _planes[2].SetNormalAndPosition(-Geometry.GetNormal(bottomFace),
+                Geometry.GetCentroidOfPoints(bottomFace));
+            _planes[3].SetNormalAndPosition(-Geometry.GetNormal(backFace),
+                Geometry.GetCentroidOfPoints(backFace));
+            _planes[4].SetNormalAndPosition(-Geometry.GetNormal(leftFace),
+                Geometry.GetCentroidOfPoints(leftFace));
+            _planes[5].SetNormalAndPosition(-Geometry.GetNormal(frontace),
+                Geometry.GetCentroidOfPoints(frontace));
+        }
 
-    private void TransformBoxFromScreenToWorld(float3[] points)
-    {
-      for (int i = 0; i < points.Length; i++)
-      {
-        points[i] = Camera.main.ScreenToWorldPoint(_boxPoints[i]);
-      }
-      ConstrucPlanesFromPoints(_boxPoints);
-    }
+        private void TransformBoxFromScreenToWorld(float3[] points)
+        {
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = Camera.main.ScreenToWorldPoint(_boxPoints[i]);
+            }
+
+            ConstrucPlanesFromPoints(_boxPoints);
+        }
 #if UNITY_EDITOR
 #pragma warning disable
     void DrawPlane(float3 position, float3 normal)
@@ -190,9 +199,9 @@ namespace ThePathfinder.Processors
       }
     }
 #endif
-      protected override int SetCategoryId()
-      {
-          return Category.Selection;
-      }
-  }
+        protected override int SetCategoryId()
+        {
+            return Category.Selection;
+        }
+    }
 }

@@ -34,7 +34,8 @@ namespace ThePathfinder.Processors
                     cCam.plane.Raycast(ray, out var center);
                     var rotationPoint = ray.GetPoint(center);
 
-          main.transform.RotateAround(rotationPoint, Vector3.up, cCam.rotateSpeed * mouse.screenPositionDelta.x * delta);
+                    main.transform.RotateAround(rotationPoint, Vector3.up,
+                        cCam.rotateSpeed * mouse.screenPositionDelta.x * delta);
                 }
 
                 var zoomDir = player.GetAxis(ActionId.Camera_Zoom);

@@ -69,9 +69,10 @@ namespace ThePathfinder.Processors
                     if (unit.Has<AttackDestination>())
                     {
                         //We are changin destination types and there are queued destinations, clear them
-                        if(queue.destinations.Count > 0) queue.destinations.Clear();
+                        if (queue.destinations.Count > 0) queue.destinations.Clear();
                         unit.Remove<AttackDestination>();
                     }
+
                     unit.Get<MoveToDestination>();
                 }
                 else
@@ -79,9 +80,10 @@ namespace ThePathfinder.Processors
                     if (unit.Has<MoveToDestination>() && queue.destinations.Count > 0)
                     {
                         //if we are changing destination types and there are queued destinations, clear them
-                        if(queue.destinations.Count != 0) queue.destinations.Clear();
+                        if (queue.destinations.Count != 0) queue.destinations.Clear();
                         unit.Remove<MoveToDestination>();
                     }
+
                     unit.Get<AttackDestination>();
                 }
 

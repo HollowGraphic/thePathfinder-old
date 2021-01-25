@@ -9,7 +9,7 @@ namespace ThePathfinder.Processors
         protected static Mouse mouse;
         protected static Player player;
         private int categoryId;
-        
+
         public ProcessorInput()
         {
             mouse = ReInput.controllers.Mouse;
@@ -22,15 +22,15 @@ namespace ThePathfinder.Processors
         /// </summary>
         /// <param name="id"></param>
         protected abstract int SetCategoryId();
-        
+
         /// <summary>
         /// Disables maps that conflict whith this <see cref="ProcessorInput"/> 
         /// </summary>
         protected void DisableConflictingInputs()
         {
-        
             EnableMaps(false);
         }
+
         /// <summary>
         /// Enables maps that conflict whith this <see cref="ProcessorInput"/>
         /// </summary>
@@ -38,10 +38,11 @@ namespace ThePathfinder.Processors
         {
             EnableMaps(true);
         }
-        private void EnableMaps( bool enable)
+
+        private void EnableMaps(bool enable)
         {
             //flip flag
-            
+
             switch (categoryId)
             {
                 case Category.Abiltity_Map:

@@ -8,7 +8,9 @@ using Unity.Mathematics;
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct PathRequest { }
+    public struct PathRequest
+    {
+    }
 
     #region HELPERS
 

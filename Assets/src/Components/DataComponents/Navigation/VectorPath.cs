@@ -13,7 +13,7 @@ namespace ThePathfinder.Components
     public struct VectorPath
     {
         public List<Vector3> value;
-       
+
         public VectorPath(List<Vector3> vectorPath)
         {
             value = new List<Vector3>(vectorPath);

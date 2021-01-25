@@ -27,17 +27,19 @@ namespace ThePathfinder.Processors.AI
                 var cTargets = seer.VisibleTargetsComponent();
 
                 Vector3 eyePosition = (float3) seer.transform.position + (math.up() * cVision.height);
-                
+
                 //find colliders within range
-                int targetCount = Physics.OverlapSphereNonAlloc(eyePosition, cVision.range, targetsInRange, cVision.mask);
-                if(targetCount == 0 && cTargets.value.length != 0)
+                int targetCount =
+                    Physics.OverlapSphereNonAlloc(eyePosition, cVision.range, targetsInRange, cVision.mask);
+                if (targetCount == 0 && cTargets.value.length != 0)
                 {
                     for (int i = 0; i < cTargets.value.length; i++)
                     {
                         seer.VisibleTargetsComponent().value.RemoveAt(i);
                     }
                 }
-                Debug.Log(Msg.BuildWatch("Found Potential Targets",targetCount.ToString()));
+
+                Debug.Log(Msg.BuildWatch("Found Potential Targets", targetCount.ToString()));
                 //INVESTIGATE: sort targets by distance?????
                 for (int i = 0; i < targetCount; i++)
                 {
@@ -46,7 +48,7 @@ namespace ThePathfinder.Processors.AI
                     if (cVision.cone)
                     {
                         var angle = Vector3.Angle(seer.transform.forward, dir.normalized);
-                        if (angle > cVision.angle/2)
+                        if (angle > cVision.angle / 2)
                         {
                             Debug.Log("Skipping");
                             continue; //skip if target is not inside of cone
@@ -63,7 +65,7 @@ namespace ThePathfinder.Processors.AI
                         if (hit.collider == target)
                         {
                             Debug.Log("Can see target");
-                            Draw.Ray(ray, dir.magnitude/2, Color.yellow);
+                            Draw.Ray(ray, dir.magnitude / 2, Color.yellow);
                             if (target.TryGetComponent<Actor>(out var actor))
                             {
                                 var entity = actor.entity;

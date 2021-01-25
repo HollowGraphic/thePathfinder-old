@@ -14,6 +14,7 @@ namespace ThePathfinder.Processors
     {
         [ExcludeBy(Component.Target, Component.MoveToDestination)]
         private readonly Group<VisibleTargets> _needsTarget = default;
+
         private readonly Group<Target> _targetingGroup = default;
 
         public void Tick(float delta)
@@ -33,6 +34,7 @@ namespace ThePathfinder.Processors
                         closestTarget = target;
                     }
                 }
+
                 Debug.Log(Msg.BuildWatch("Found Target", closestTarget.exist.ToString()));
                 combatant.Get<Target>().value = closestTarget;
             }

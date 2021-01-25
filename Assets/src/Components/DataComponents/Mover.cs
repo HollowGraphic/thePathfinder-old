@@ -14,8 +14,7 @@ namespace ThePathfinder.Components
     [Serializable, HideLabel]
     public struct Mover
     {
-        [HideInInspector]
-        public bool canMove;
+        [HideInInspector] public bool canMove;
         public bool canRotate;
     }
 

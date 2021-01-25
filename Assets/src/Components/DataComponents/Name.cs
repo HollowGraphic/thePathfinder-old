@@ -13,7 +13,8 @@ namespace ThePathfinder.Components
         {
             value = name;
         }
-         public string value;
+
+        public string value;
     }
 
     #region HELPERS

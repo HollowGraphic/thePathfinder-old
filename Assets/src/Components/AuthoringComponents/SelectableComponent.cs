@@ -22,6 +22,5 @@ namespace ThePathfinder.Components.Authoring
                 isCandidate => OnIsSelectedCandidateChanged(isCandidate));
             entity.layer.Observer.Add(entity, s => s.Has<Selected>(), isSelected => OnSelectedChanged(isSelected));
         }
-
     }
 }
