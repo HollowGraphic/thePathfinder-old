@@ -24,7 +24,7 @@ namespace ThePathfinder.Components.Authoring
             entity.Set(_mover);
             entity.Set(_maxSpeed);
             entity.Set(_rotationSpeed);
-            entity.Set<Interpolator>();
+            //entity.Set(new VectorPath());
             entity.Set<DestinationQueue>().destinations = new Queue<Destination>(20);
         }
 

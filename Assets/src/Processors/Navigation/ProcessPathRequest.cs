@@ -13,17 +13,18 @@ namespace ThePathfinder.Processors.AI
     sealed class ProcessPathRequest : Processor
     {
         private readonly Group<PathRequest, Navigator> _pathRequesters = default;
-        private readonly Group<VectorPath> _vectorPaths = default;
 
         public override void HandleEcsEvents()
         {
             foreach (var requester in _pathRequesters.added)
             {
+                
                 // fire a ray first to see if we can just move in straight line
                 var direction = ((Vector3) requester.DestinationComponent().value - requester.transform.position);
-                if (Physics.Raycast((requester.transform.position + (Vector3.up *.01f)),
-                    direction.normalized, direction.magnitude ))
+                if (Physics.Raycast((requester.transform.position + (Vector3.up * .01f)),
+                    direction.normalized, direction.magnitude))
                 {
+                    Debug.Log("Calculate path");
                     // Start a new path to the targetPosition, call the the OnPathComplete function
                     // when the path has been calculated (which may take a few frames depending on the complexity)
                     var path = ABPath.Construct(requester.transform.position, requester.DestinationComponent().value,
@@ -40,23 +41,50 @@ namespace ThePathfinder.Processors.AI
                             if (!p.error)
                             {
                                 Debug.Log(Msg.BuildWatch(" Path N Count ", p.vectorPath.Count.ToString()));
+                                
+                                //adjust starting path node
+                                {
+                                    float bestDist = float.PositiveInfinity;
+                                    float bestFactor = 0f;
+                                    int bestIndex = 0;
+                                    
+                                    for (int i = 0; i < p.vectorPath.Count - 1; i++)
+                                    {
+                                        float factor =
+                                            VectorMath.ClosestPointOnLineFactor(p.vectorPath[i], p.vectorPath[i + 1],
+                                                requester.transform.position);
+                                        Vector3 closest = Vector3.Lerp(p.vectorPath[i], p.vectorPath[i + 1], factor);
+
+                                        float dist = (requester.transform.position - closest).sqrMagnitude;
+
+                                        if (dist < bestDist)
+                                        {
+                                            bestDist = dist;
+                                            bestFactor = factor;
+                                            bestIndex = i;
+                                        }
+                                    }
+                                    Debug.Log(Msg.BuildWatch("Best Index", bestIndex.ToString()));
+                                    p.vectorPath[bestIndex] += (p.vectorPath[bestIndex + 1] - p.vectorPath[bestIndex]).normalized * bestDist;
+                                }
                                 //set the vector path
-                                requester.Get<VectorPath>().value = new List<Vector3>(p.vectorPath);
-                                requester.Remove<PathRequest>();
+                                requester.Get<VectorPath>() = new VectorPath(p.vectorPath);
                             }
 
                             p.Release(this);
                         });
                     AstarPath.StartPath(path);
                 }
-                else //no obstacles in the way, ignore path request, and if there happens to be a vector path, remove it 
+                else //no obstacles in the way, manually set path 
                 {
-                    Debug.Log("Skipping path request");
-                    requester.Remove<PathRequest>();
-                    if (requester.Has<VectorPath>()) requester.Remove<VectorPath>();
+                    Debug.Log("Straight line path");
+                    requester.Get<VectorPath>().value = new List<Vector3>(){requester.transform.position, requester.DestinationComponent().value};
                 }
-            }
 
+                // Reset navigator
+                requester.NavigatorComponent().currentPathNode = 0;
+                requester.Remove<PathRequest>();
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace ThePathfinder.Processors
 {
+    //TODO this should happen at the end of a frame?
     sealed class ProcessEntityMovement : Processor, ITick
     {
         private readonly Group<Heading, Mover, MaxSpeed> _group = default;

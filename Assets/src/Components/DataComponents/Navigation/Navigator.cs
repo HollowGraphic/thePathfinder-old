@@ -21,7 +21,7 @@ namespace ThePathfinder.Components
         [HideInInspector]
         public float lastRepath;
         public float repathRate;
-        
+        public int currentPathNode;
     }
 
     #region HELPERS

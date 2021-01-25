@@ -12,7 +12,6 @@ namespace ThePathfinder.Processors
   {
     private readonly Group<Unit, Selected> _selectedUnits = default;
 
-    //BUG
     public override void HandleEcsEvents()
     {
       foreach (var unit in _selectedUnits.added)
