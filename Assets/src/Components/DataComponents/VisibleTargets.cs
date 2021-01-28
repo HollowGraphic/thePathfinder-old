@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using Unity.IL2CPP.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
 
@@ -22,7 +21,7 @@ namespace ThePathfinder.Components
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    static partial class Component
+    static partial class GameComponent
     {
         public const string VisibleTargets = "ThePathfinder.Components.VisibleTargets";
 

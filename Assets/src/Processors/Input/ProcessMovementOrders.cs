@@ -2,52 +2,45 @@ using System;
 using BigBiteStudios;
 using Pixeye.Actors;
 using ThePathfinder.Components;
-using ThePathfinder.Components.Authoring;
 using ThePathfinder.Input;
 using UnityEngine;
 
-namespace ThePathfinder.Processors
+namespace ThePathfinder.Processors.Input
 {
     [Serializable]
-    sealed class ProcessMovementOrders : ProcessorInput, ITick
+    internal sealed class ProcessMovementOrders : ProcessorInput, ITick
     {
         private readonly Group<Unit, Navigator, Selected> _moveableUnits = default;
         private readonly Group<Unit, Navigator, Selected, Heading> _movingUnits = default;
-        private bool attackMove = false;
+        private bool _attackMove;
 
         public void Tick(float delta)
         {
-            var queue = player.GetButton(ActionId.Order_Waypoint);
-            if (player.GetButtonDown(ActionId.Order_Move) && !attackMove)
-            {
-                AssignDestination(queue, true);
-            }
+            var queue = Player.GetButton(ActionId.Order_Waypoint);
+            if (Player.GetButtonDown(ActionId.Order_Move) && !_attackMove) AssignDestination(queue, true);
 
-            if (player.GetButtonDown(ActionId.Ability_Cast) && attackMove)
-            {
-                AssignDestination(queue, false);
-            }
+            if (Player.GetButtonDown(ActionId.Ability_Cast) && _attackMove) AssignDestination(queue, false);
 
             //clean up attack move state
-            if (player.GetButtonUp(ActionId.Ability_Cast) && attackMove && !queue)
+            if (Player.GetButtonUp(ActionId.Ability_Cast) && _attackMove && !queue)
             {
                 EnableConflictingInputs();
-                attackMove = false;
+                _attackMove = false;
             }
 
-            if (player.GetButtonDown(ActionId.Ability_Attack))
+            if (Player.GetButtonDown(ActionId.Ability_Attack))
             {
-                attackMove = true;
+                _attackMove = true;
                 DisableConflictingInputs();
             }
 
-            if (player.GetButtonDown(ActionId.Ability_Abort))
+            if (Player.GetButtonDown(ActionId.Ability_Abort))
             {
-                attackMove = false;
+                _attackMove = false;
                 EnableConflictingInputs();
             }
 
-            if (player.GetButtonDown(ActionId.Order_Stop))
+            if (Player.GetButtonDown(ActionId.Order_Stop))
             {
                 Debug.Log("Order Stop");
                 foreach (var unit in _movingUnits)
@@ -60,7 +53,7 @@ namespace ThePathfinder.Processors
 
         private void AssignDestination(bool shouldQueue, bool forceMove)
         {
-            Destination destination = new Destination(mouse.GetWorldPosition());
+            var destination = new Destination(Mouse.GetWorldPosition());
             foreach (var unit in _moveableUnits)
             {
                 var queue = unit.DestinationQueueComponent();
@@ -69,9 +62,10 @@ namespace ThePathfinder.Processors
                     if (unit.Has<AttackDestination>())
                     {
                         //We are changin destination types and there are queued destinations, clear them
-                        if(queue.destinations.Count > 0) queue.destinations.Clear();
+                        if (queue.destinations.Count > 0) queue.destinations.Clear();
                         unit.Remove<AttackDestination>();
                     }
+
                     unit.Get<MoveToDestination>();
                 }
                 else
@@ -79,9 +73,10 @@ namespace ThePathfinder.Processors
                     if (unit.Has<MoveToDestination>() && queue.destinations.Count > 0)
                     {
                         //if we are changing destination types and there are queued destinations, clear them
-                        if(queue.destinations.Count != 0) queue.destinations.Clear();
+                        if (queue.destinations.Count != 0) queue.destinations.Clear();
                         unit.Remove<MoveToDestination>();
                     }
+
                     unit.Get<AttackDestination>();
                 }
 

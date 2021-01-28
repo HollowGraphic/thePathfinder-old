@@ -1,18 +1,15 @@
 using Pixeye.Actors;
 using ThePathfinder.Components;
 
-
-namespace ThePathfinder.Processors.AI
+namespace ThePathfinder.Processors.Navigation
 {
-    sealed class ProcessMoveToDestination : Processor
+    internal sealed class ProcessMoveToDestination : Processor
     {
         private readonly Group<MoveToDestination> _group = default;
+
         public override void HandleEcsEvents()
         {
-            foreach (var entity in _group.added)
-            {
-                entity.Get<PathRequest>();
-            }
+            foreach (var entity in _group.added) entity.Get<PathRequest>();
         }
     }
 }

@@ -1,14 +1,13 @@
-using BigBiteStudios.Logging;
 using Drawing;
 using Pixeye.Actors;
 using ThePathfinder.Components;
 using Unity.Mathematics;
 using UnityEngine;
 
-
-namespace ThePathfinder.Processors
+namespace ThePathfinder.Processors.Common
 {
-    sealed class ProcessEntityMovement : Processor, ITick
+    //TODO this should happen at the end of a frame?
+    internal sealed class ProcessEntityMovement : Processor, ITick
     {
         private readonly Group<Heading, Mover, MaxSpeed> _group = default;
 
@@ -32,9 +31,8 @@ namespace ThePathfinder.Processors
                     //debug heading
                     Draw.Arrow(entity.transform.localPosition, entity.transform.position + (Vector3) heading.value);
                     var speedFactor = entity.Has<SpeedMod>() ? entity.SpeedModComponent().value : 1;
-                    entity.transform.position += (Vector3)heading.value * entity.MaxSpeedComponent().value *
+                    entity.transform.position += (Vector3) heading.value * entity.MaxSpeedComponent().value *
                                                  speedFactor * delta;
-                     
                 }
             }
         }

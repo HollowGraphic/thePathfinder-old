@@ -1,8 +1,6 @@
 using System;
-using UnityEngine;
 using Pixeye.Actors;
-using Sirenix.OdinInspector;
-using Drawing;
+using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring
 {

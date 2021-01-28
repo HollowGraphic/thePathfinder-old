@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring
 {
-    public class MaxSpeedComponent : AuthoringComponent
+    public sealed class CameraComponent : AuthoringComponent
     {
-        [SerializeField]
-        private MaxSpeed _maxSpeed;
+        [SerializeField] private GameCamera settings;
+
         public override void Set(ref ent entity)
         {
-            entity.Set(_maxSpeed);
+            entity.Set(settings);
         }
     }
 }

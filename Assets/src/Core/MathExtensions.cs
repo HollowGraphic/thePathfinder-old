@@ -6,9 +6,9 @@ namespace BigBiteStudios.Math
     {
         public static float ComputeXAngle(this quaternion q)
         {
-            float sinr_cosp = 2 * (q.value.w * q.value.x + q.value.y * q.value.z);
-            float cosr_cosp = 1 - 2 * (q.value.x * q.value.x + q.value.y * q.value.y);
-            return math.atan2(sinr_cosp, cosr_cosp);
+            float sinrCosp = 2 * (q.value.w * q.value.x + q.value.y * q.value.z);
+            float cosrCosp = 1 - 2 * (q.value.x * q.value.x + q.value.y * q.value.y);
+            return math.atan2(sinrCosp, cosrCosp);
         }
 
         public static float ComputeYAngle(this quaternion q)
@@ -22,9 +22,9 @@ namespace BigBiteStudios.Math
 
         public static float ComputeZAngle(this quaternion q)
         {
-            float siny_cosp = 2 * (q.value.w * q.value.z + q.value.x * q.value.y);
-            float cosy_cosp = 1 - 2 * (q.value.y * q.value.y + q.value.z * q.value.z);
-            return math.atan2(siny_cosp, cosy_cosp);
+            float sinyCosp = 2 * (q.value.w * q.value.z + q.value.x * q.value.y);
+            float cosyCosp = 1 - 2 * (q.value.y * q.value.y + q.value.z * q.value.z);
+            return math.atan2(sinyCosp, cosyCosp);
         }
 
         public static float3 CoputeAngles(this quaternion q)

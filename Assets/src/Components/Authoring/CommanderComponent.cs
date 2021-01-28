@@ -1,5 +1,4 @@
 using Pixeye.Actors;
-using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring
 {

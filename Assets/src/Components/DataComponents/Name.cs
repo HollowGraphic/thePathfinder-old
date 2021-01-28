@@ -13,7 +13,8 @@ namespace ThePathfinder.Components
         {
             value = name;
         }
-         public string value;
+
+        public string value;
     }
 
     #region HELPERS
@@ -21,7 +22,7 @@ namespace ThePathfinder.Components
     // [Unity.IL2CPP.CompilerServices.Il2CppSetOption(Option.NullChecks, false)]
     // [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     // [Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    static partial class Component
+    static partial class GameComponent
     {
         public const string Name = "ThePathfinder.Components.Name";
 
