@@ -15,7 +15,6 @@ namespace ThePathfinder.Processors.Navigation
         /// <summary>
         ///     entities that can 'see'
         /// </summary>
-        [ExcludeBy(GameComponent.Dead)]
         private readonly Group<Vision, VisibleTargets> _seers = default;
 
         private readonly Collider[] _targetsInRange = new Collider[GameSettings.VisibleTargetCapacity];
@@ -59,20 +58,16 @@ namespace ThePathfinder.Processors.Navigation
                     if (Physics.Raycast(ray, out var hit))
                     {
                         //we can see it
-                        if (hit.collider == target)
-                        {
-                            Debug.Log("Can see target");
-                            Draw.Ray(ray, dir.magnitude / 2, Color.yellow);
-                            if (target.TryGetComponent<Actor>(out var actor))
-                            {
-                                var entity = actor.entity;
-                                if (!cTargets.value.Has(entity))
-                                {
-                                    Debug.Log("Adding Target");
-                                    cTargets.value.Add(entity);
-                                }
-                            }
-                        }
+                        if (hit.collider != target) continue;
+                        Debug.Log("Can see target");
+                        Draw.Ray(ray, dir.magnitude / 2, Color.yellow);
+                        if (!target.TryGetComponent<Actor>(out var actor)) continue;//INVESTIGATE expensive?
+                        var entity = actor.entity;
+                        bool hasTarget = cTargets.value.Has(entity);
+                        if (!entity.exist && hasTarget) cTargets.value.Remove(entity);
+                        if(hasTarget) continue;
+                        Debug.Log("Adding Target");
+                        cTargets.value.Add(entity);
                     }
                     else
                     {

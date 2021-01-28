@@ -16,6 +16,7 @@ namespace ThePathfinder.Layers
         {
             Comparers.Add(new Float3Comparer());
             //^IMPORTANT all above this line
+            Add<ProcessDeadEntity>();
             Add<ProcessSelectionBox>();
 
             Add<ProcessPointerHover>();
