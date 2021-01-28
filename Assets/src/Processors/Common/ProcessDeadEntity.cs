@@ -3,19 +3,16 @@ using ThePathfinder.Components;
 
 namespace ThePathfinder.Processors.Common
 {
-    public sealed class ProcessDeadEntity : Processor, ITick
+    public sealed class ProcessDeadEntity : Processor, ITickLate
     {
         private readonly Group<Dead> _group = default;
-        public override void HandleEcsEvents()
+
+        public void TickLate(float delta)
         {
-            foreach (var entity in _group.added)      
+            foreach (var entity in _group)      
             {
                 entity.Release();
             }
-        }
-
-        public void Tick(float delta)
-        {
         }
     }
 }
