@@ -15,6 +15,7 @@ namespace ThePathfinder.Processors.Navigation
         /// <summary>
         ///     entities that can 'see'
         /// </summary>
+        [ExcludeBy(GameComponent.Dead)]
         private readonly Group<Vision, VisibleTargets> _seers = default;
 
         private readonly Collider[] _targetsInRange = new Collider[GameSettings.VisibleTargetCapacity];
