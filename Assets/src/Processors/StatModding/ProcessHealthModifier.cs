@@ -15,7 +15,8 @@ namespace ThePathfinder.Processors.StatModding
                 float mod = math.max(entity.HealthComponent().value + entity.HealthModifierComponent().value, 0);
                 //don't go above max health
                 float health = math.min(mod, entity.MaxHealthComponent().value);
-                entity.HealthComponent().value = health;
+                if(health == 0) entity.Get<Dead>();//kills entity
+                else entity.HealthComponent().value = health;
             }
         }
     }

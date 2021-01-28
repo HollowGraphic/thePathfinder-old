@@ -34,6 +34,7 @@ namespace ThePathfinder.Layers
             Add<ProcessNavigatorTarget>();
             ////////////////////////////////////////
             Add<ProcessHealthModifier>();
+            Add<ProcessDeadEntity>();//TODO end of frame?
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.

@@ -7,14 +7,8 @@ using Sirenix.OdinInspector;
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct Health
+    public struct Dead
     {
-        public float value;
-
-        public Health(float health)
-        {
-            value = health;
-        }
     }
 
     #region HELPERS
@@ -24,25 +18,19 @@ namespace ThePathfinder.Components
     // [Il2CppSetOption(Option.DivideByZeroChecks, false)]
     static partial class GameComponent
     {
-        public const string Health = "ThePathfinder.Components.Health";
+        public const string Dead = "ThePathfinder.Components.Dead";
 
-        /// <summary>
-        /// Cumulative, always add to this.
-        /// <remarks>Yes, even negative numbers</remarks>
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref Health HealthComponent(in this ent entity) =>
-            ref Storage<Health>.components[entity.id];
+        public static ref Dead DeadComponent(in this ent entity) =>
+            ref Storage<Dead>.components[entity.id];
     }
 
     // [Il2CppSetOption(Option.NullChecks, false)]
     // [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     // [Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    sealed class StorageComponentHealth : Storage<Health>
+    sealed class StorageComponentDead : Storage<Dead>
     {
-        public override Health Create() => new Health();
+        public override Dead Create() => new Dead();
 
         // Use for cleaning components that were removed at the current frame.
         public override void Dispose(indexes disposed)
