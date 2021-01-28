@@ -10,13 +10,14 @@ namespace ThePathfinder.Components.Authoring
     [RequireComponent(typeof(IAstarAI))]
     public class NavigatorComponent : AuthoringComponent
     {
-        [FormerlySerializedAs("_navigator")] [SerializeField] private Navigator navigator;
-        [FormerlySerializedAs("_mover")] [SerializeField] private Mover mover;
-        [FormerlySerializedAs("_maxSpeed")] [SerializeField] private MaxSpeed maxSpeed;
+        [SerializeField] private Navigator navigator;
+        [SerializeField] private Mover mover;
+        [SerializeField] private MaxSpeed maxSpeed;
         [FormerlySerializedAs("_rotationSpeed")] [SerializeField, ShowIf("CanRotate")] private RotationSpeed rotationSpeed;
 
         public override void Set(ref ent entity)
         {
+            mover.canMove = true;
             entity.Set(navigator);
             entity.Set(mover);
             entity.Set(maxSpeed);
