@@ -16,6 +16,25 @@ namespace ThePathfinder.Processors.Units
 
         public void Tick(float delta)
         {
+            foreach (var combatant in _targetingGroup)
+            {
+                var target = combatant.TargetComponent();
+                if (!target.Value.exist)
+                {
+                    //target has been destroyed, remove it
+                    combatant.Remove<Target>();
+                    continue; //skip to next entity
+                }
+
+                float distanceToTarget = math.distance(target.Value.transform.position, combatant.transform.position);
+                Draw.Line(combatant.transform.position, target.Value.transform.position, Color.red);
+                if (distanceToTarget > combatant.VisionComponent().range)
+                {
+                    Debug.Log("Target Lost");
+                    combatant.Remove<Target>();
+                }
+            }
+
             foreach (var combatant in _needsTarget)
             {
                 Debug.Log("Scoring Targets");
@@ -25,24 +44,13 @@ namespace ThePathfinder.Processors.Units
                 ent closestTarget = default;
                 foreach (var target in cVisibleTargets.value)
                 {
+                    if(!target.exist) continue;
                     var distance = math.distance(target.transform.position, combatant.transform.position);
                     if (distance < closest) closestTarget = target;
                 }
 
                 Debug.Log(Msg.BuildWatch("Found Target", closestTarget.exist.ToString()));
                 combatant.Get<Target>().Value = closestTarget;
-            }
-
-            foreach (var combatant in _targetingGroup)
-            {
-                var target = combatant.TargetComponent();
-                var distanceToTarget = math.distance(target.Value.transform.position, combatant.transform.position);
-                Draw.Line(combatant.transform.position, target.Value.transform.position, Color.red);
-                if (distanceToTarget > combatant.VisionComponent().range)
-                {
-                    Debug.Log("Target Lost");
-                    combatant.Remove<Target>();
-                }
             }
         }
     }
