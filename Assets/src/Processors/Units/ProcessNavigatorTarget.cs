@@ -24,11 +24,7 @@ namespace ThePathfinder.Processors.Units
                     unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
 
                 var unitPos = unit.transform.position;
-                Debug.Log(Msg.BuildWatch("Unit Pos", unitPos.ToString()));
                 var targetPos = target.Value.transform.position;
-                Debug.Log(Msg.BuildWatch("Target Pos", targetPos.ToString()));
-                Debug.Log(Msg.BuildWatch("Unit Alive", unit.exist.ToString()));
-                
                 var dir = unitPos - targetPos;
                 if (dir.magnitude < unit.CombatantComponent().attackRange) continue;
                 //we are within attack range, attack

@@ -14,7 +14,6 @@ namespace ThePathfinder.Components.Authoring
             //set entity
             entity.Set(health);
             entity.Set<Health>() = new Health(health.value);
-            entity.Set(new HealthModifier(-10f));
             entity.layer.Observer.Add(entity, (e) => e.HealthComponent().value,
                 f => { Debug.Log(Msg.BuildWatch("Health", f.ToString(CultureInfo.InvariantCulture))); });
         }

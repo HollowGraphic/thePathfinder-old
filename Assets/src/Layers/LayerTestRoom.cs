@@ -16,13 +16,13 @@ namespace ThePathfinder.Layers
         {
             Comparers.Add(new Float3Comparer());
             //^IMPORTANT all above this line
+            Add<ProcessDeadEntity>();
             Add<ProcessSelectionBox>();
 
             Add<ProcessPointerHover>();
             Add<ProcessSelectionConfirm>();
             Add<ProcessMovementOrders>();
 
-            Add<ProcessDestinations>();
             Add<ProcessPathRequest>();
             Add<ProcessNavigator>();
             Add<ProcessEntityMovement>(); //TODO this should happen at the end of a frame?
@@ -34,7 +34,8 @@ namespace ThePathfinder.Layers
             Add<ProcessNavigatorTarget>();
             ////////////////////////////////////////
             Add<ProcessHealthModifier>();
-            Add<ProcessDeadEntity>();//TODO end of frame?
+            Add<ProcessAttack>();
+            
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.

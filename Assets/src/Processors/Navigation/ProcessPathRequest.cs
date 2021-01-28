@@ -9,6 +9,7 @@ namespace ThePathfinder.Processors.Navigation
 {
     internal sealed class ProcessPathRequest : Processor
     {
+        //INVESTIGATE shouldn't we be filtering by destination also?
         private readonly Group<PathRequest, Navigator> _pathRequesters = default;
 
         public override void HandleEcsEvents()

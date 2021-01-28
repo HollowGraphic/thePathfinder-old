@@ -13,6 +13,16 @@ namespace ThePathfinder.Processors.Units
         private readonly Group<VisibleTargets> _needsTarget = default;
 
         private readonly Group<Target> _targetingGroup = default;
+        private readonly Group<Dead, Predator> _deadTargets = default;
+        public override void HandleEcsEvents()
+        {
+            //let the predator know that their prey is dead
+            foreach (var deadTarget in _deadTargets.added)
+            {
+                Debug.Log("Removing target from predator");
+                deadTarget.PredatorComponent().Value.Remove<Target>();
+            }
+        }
 
         public void Tick(float delta)
         {
@@ -44,13 +54,13 @@ namespace ThePathfinder.Processors.Units
                 ent closestTarget = default;
                 foreach (var target in cVisibleTargets.value)
                 {
-                    if(!target.exist) continue;
                     var distance = math.distance(target.transform.position, combatant.transform.position);
                     if (distance < closest) closestTarget = target;
                 }
 
                 Debug.Log(Msg.BuildWatch("Found Target", closestTarget.exist.ToString()));
                 combatant.Get<Target>().Value = closestTarget;
+                closestTarget.Get<Predator>().Value = combatant;
             }
         }
     }
