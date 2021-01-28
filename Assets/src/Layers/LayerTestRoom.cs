@@ -4,6 +4,7 @@ using ThePathfinder.Processors.Selection;
 using ThePathfinder.Processors.Common;
 using ThePathfinder.Processors.Input;
 using ThePathfinder.Processors.Navigation;
+using ThePathfinder.Processors.StatModding;
 using ThePathfinder.Processors.Units;
 
 namespace ThePathfinder.Layers
@@ -32,6 +33,7 @@ namespace ThePathfinder.Layers
             Add<ProcessTargetAcquisition>();
             Add<ProcessNavigatorTarget>();
             ////////////////////////////////////////
+            Add<ProcessHealthModifier>();
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.
