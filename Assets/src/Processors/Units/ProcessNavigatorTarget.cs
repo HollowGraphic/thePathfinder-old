@@ -30,12 +30,15 @@ namespace ThePathfinder.Processors.Units
                 Debug.Log(Msg.BuildWatch("Unit Alive", unit.exist.ToString()));
                 
                 var dir = unitPos - targetPos;
+                if (dir.magnitude < unit.CombatantComponent().attackRange) continue;
+                //we are within attack range, attack
                 var norm = dir.normalized;
                 var offset = norm * 3.5f;
                 //set destination to target position, and request a path
 
                 unit.Get<Destination>() = new Destination(offset + targetPos);
                 unit.Get<PathRequest>();
+
             }
         }
     }
