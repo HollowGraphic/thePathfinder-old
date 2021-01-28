@@ -1,5 +1,6 @@
 using Pixeye.Actors;
 using ThePathfinder.Components;
+using Unity.Mathematics;
 
 namespace ThePathfinder.Processors.Common
 {
@@ -11,11 +12,12 @@ namespace ThePathfinder.Processors.Common
         public void Tick(float delta)
         {
             //combatants have a basic attack
-            foreach (var combatant in _group)
+            foreach (var predator in _group)
             {
                 //if(combatant.Has<ActiveWeapon>())
-                //INVESTIGATE is there a default attack damage value?
-                combatant.TargetComponent().Value.Get<HealthModifier>().value += -10;
+                //else
+                if(math.distance(predator.transform.position, predator.TargetComponent().Value.transform.position) < predator.CombatantComponent().attackRange)
+                    predator.TargetComponent().Value.Get<HealthModifier>().value += -10;//INVESTIGATE is there a default attack damage value?
             }
         }
     }
