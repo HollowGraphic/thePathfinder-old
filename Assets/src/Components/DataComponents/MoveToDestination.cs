@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct MoveToDestination
+    public struct MoveToDestination//TODO generalize this (something like 'Passive'|| 'Aggressive'
     {
     }
 

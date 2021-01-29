@@ -3,18 +3,21 @@ using System.Runtime.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
+using UnityEngine.Serialization;
 
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
     public struct Destination
     {
-        public Destination(float3 location)
+        public Destination(float3 location, DestinationType destinationType)
         {
-            value = location;
+            this.location = location;
+            this.destinationType = destinationType;
         }
 
-        public float3 value;
+        public DestinationType destinationType;//we currently need this to know the type when we dequeue
+        public float3 location;
     }
 
     #region HELPERS
@@ -49,4 +52,11 @@ namespace ThePathfinder.Components
     }
 
     #endregion
+
+    public enum DestinationType
+    {
+        Default,
+        AttackMove,
+        Target
+    }
 }

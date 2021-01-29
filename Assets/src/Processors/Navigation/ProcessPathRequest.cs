@@ -17,14 +17,14 @@ namespace ThePathfinder.Processors.Navigation
             foreach (var requester in _pathRequesters.added)
             {
                 // fire a ray first to see if we can just move in straight line
-                var direction = (Vector3) requester.DestinationComponent().value - requester.transform.position;
+                var direction = (Vector3) requester.DestinationComponent().location - requester.transform.position;
                 if (Physics.Raycast(requester.transform.position + Vector3.up * .01f,
                     direction.normalized, direction.magnitude))
                 {
                     Debug.Log("Calculate path");
                     // Start a new path to the targetPosition, call the the OnPathComplete function
                     // when the path has been calculated (which may take a few frames depending on the complexity)
-                    var path = ABPath.Construct(requester.transform.position, requester.DestinationComponent().value,
+                    var path = ABPath.Construct(requester.transform.position, requester.DestinationComponent().location,
                         p =>
                         {
                             Debug.Log("A path was calculated. Did it fail with an error? " + p.error);
@@ -78,7 +78,7 @@ namespace ThePathfinder.Processors.Navigation
                 {
                     Debug.Log("Straight line path");
                     requester.Get<VectorPath>().value = new List<Vector3>
-                        {requester.transform.position, requester.DestinationComponent().value};
+                        {requester.transform.position, requester.DestinationComponent().location};
                 }
 
                 // Reset navigator

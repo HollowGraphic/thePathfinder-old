@@ -33,9 +33,8 @@ namespace ThePathfinder.Layers
             Add<ProcessTargetAcquisition>();
             Add<ProcessNavigatorTarget>();
             ////////////////////////////////////////
-            Add<ProcessHealthModifier>();
             Add<ProcessAttack>();
-            
+            Add<ProcessHealthModifier>();
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.
