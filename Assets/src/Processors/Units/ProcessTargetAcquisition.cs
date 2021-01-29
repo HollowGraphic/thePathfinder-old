@@ -41,6 +41,7 @@ namespace ThePathfinder.Processors.Units
                 if (distanceToTarget > combatant.VisionComponent().range)
                 {
                     Debug.Log("Target Lost");
+                    combatant.TargetComponent().Value.Remove<Predator>();
                     combatant.Remove<Target>();
                 }
             }

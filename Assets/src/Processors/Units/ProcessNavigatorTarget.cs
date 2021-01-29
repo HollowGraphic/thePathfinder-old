@@ -5,36 +5,33 @@ using UnityEngine;
 
 namespace ThePathfinder.Processors.Units
 {
-    internal sealed class ProcessNavigatorTarget : Processor, ITick
+    /// <summary>
+    /// Handle new target on navigator
+    /// </summary>
+    internal sealed class ProcessNavigatorTarget : Processor
     {
         [ExcludeBy(GameComponent.MoveToDestination)]
         private readonly Group<Navigator, Target, Combatant> _targetingUnits = default;
-
-        public void Tick(float delta)
-        {
-        }
-
         public override void HandleEcsEvents()
         {
             foreach (var unit in _targetingUnits.added)
             {
                 var target = unit.TargetComponent();
-                if (unit.Has<AttackDestination>() && unit.Has<Destination>())
-                    //TODO pop current destination into queue so we can go back to it after we deal with target
-                    unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
-
-                var unitPos = unit.transform.position;
                 var targetPos = target.Value.transform.position;
-                var dir = unitPos - targetPos;
-                if (dir.magnitude < unit.CombatantComponent().attackRange) continue;
-                //we are within attack range, attack
+                var dir = unit.transform.position - targetPos;
+                if (dir.magnitude < unit.CombatantComponent().attackRange) continue;//we are within attack range
+            
+                if (unit.Has<Destination>() && 
+                    unit.DestinationComponent().destinationType != DestinationType.Target) //handle previous destination type
+                {
+                    unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
+                }
+                //not within attack range, calculate new destination
                 var norm = dir.normalized;
-                var offset = norm * 3.5f;
+                var offset = norm * 3.5f;//INVESTIGATE why the hardcoded value?
                 //set destination to target position, and request a path
-
-                unit.Get<Destination>() = new Destination(offset + targetPos);
+                unit.Get<Destination>() = new Destination(offset + targetPos, DestinationType.Target);
                 unit.Get<PathRequest>();
-
             }
         }
     }

@@ -12,12 +12,13 @@ namespace ThePathfinder.Processors.Common
         public void Tick(float delta)
         {
             //combatants have a basic attack
-            foreach (var predator in _group)
+            foreach (var attacker in _group)
             {
                 //if(combatant.Has<ActiveWeapon>())
                 //else
-                if(math.distance(predator.transform.position, predator.TargetComponent().Value.transform.position) < predator.CombatantComponent().attackRange)
-                    predator.TargetComponent().Value.Get<HealthModifier>().value += -10;//INVESTIGATE is there a default attack damage value?
+                if(math.distance(attacker.transform.position, attacker.TargetComponent().Value.transform.position) < attacker.CombatantComponent().attackRange)
+                    attacker.TargetComponent().Value.Get<HealthModifier>().value = -10;//INVESTIGATE is there a default attack damage value?
+                //TODO store statmods on ents structure, then loop through them to apply mods
             }
         }
     }

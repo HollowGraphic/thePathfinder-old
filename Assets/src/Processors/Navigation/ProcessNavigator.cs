@@ -1,3 +1,4 @@
+using System;
 using BigBiteStudios.Logging;
 using Drawing;
 using Pixeye.Actors;
@@ -7,15 +8,20 @@ using UnityEngine;
 
 namespace ThePathfinder.Processors.Navigation
 {
-    internal sealed class ProcessNavigator : Processor, ITick
+    /// <summary>
+    /// Process navigators with navigation path
+    /// </summary>
+    public sealed class ProcessNavigator : Processor, ITick
     {
         /// <summary>
-        ///     How far to look for waypoints?
+        ///How far to look for waypoints?
         /// </summary>
         private const float NextWaypointDistance = .5f;
 
-        //[ExcludeBy(Component.PathRequest)]
-        private readonly Group<Navigator, Destination, VectorPath> _navigators = default;
+        [ExcludeBy(GameComponent.Arrived)]//
+        private readonly Group<Navigator, Destination, DestinationQueue, VectorPath> _navigators = default;
+
+        private readonly Group<Navigator, Arrived, Heading> _arrivedNavigators = default;
 
         public void Tick(float delta)
         {
@@ -82,7 +88,7 @@ namespace ThePathfinder.Processors.Navigation
                 heading = new Heading(math.normalize(cVecPath.value[cNavigator.currentPathNode] -
                                                      unit.transform.position));
 
-                var distance = math.distance(unit.transform.position, destination.value);
+                var distance = math.distance(unit.transform.position, destination.location);
 
                 // Slow down smoothly upon approaching the end of the path and there are no more destinations queued
                 // This value will smoothly go from 1 to 0 as the agent approaches the last waypoint in the path.
@@ -96,14 +102,13 @@ namespace ThePathfinder.Processors.Navigation
                 if (approachingFinalWaypoint && distanceToWaypoint < .1f)
                 {
                     Debug.Log(Msg.BuildWatch(unit.transform.name, "Removing Destination"));
-
-                    unit.Remove<Destination>();
+                    unit.Get<Arrived>();
                     break;
                 }
 
                 unit.NavigatorComponent() = cNavigator;
                 unit.Get<Heading>() = heading;
-                Draw.Cross(destination.value);
+                Draw.Cross(destination.location);
             }
         }
 
@@ -125,7 +130,15 @@ namespace ThePathfinder.Processors.Navigation
                     if (entity.Has<AttackDestination>()) entity.Remove<AttackDestination>();
                     //remove path
                     entity.Remove<VectorPath>();
+
+                    //reset navigator
+                    entity.Remove<Arrived>();
                 }
+
+            foreach (var entity in _arrivedNavigators.added)   
+            {
+                entity.Remove<Heading>();
+            }
         }
     }
 }
