@@ -18,7 +18,7 @@ namespace ThePathfinder.Processors.StatModding
                 if(health == 0) entity.Get<Dead>();//kills entity
                 else entity.HealthComponent().value = health;
                 //always remove the health mod
-                entity.Remove<HealthModifier>();
+                //entity.Remove<HealthModifier>();
             }
         }
     }
