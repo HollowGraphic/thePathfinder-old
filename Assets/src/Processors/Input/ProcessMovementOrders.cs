@@ -10,8 +10,8 @@ namespace ThePathfinder.Processors.Input
     [Serializable]
     internal sealed class ProcessMovementOrders : ProcessorInput, ITick
     {
-        private readonly Group<Unit, Navigator, Selected> _movableUnits = default;
-        private readonly Group<Unit, Navigator, Selected, Heading> _movingUnits = default;
+        private readonly Group<Agent, Navigator, Selected> _movableUnits = default;
+        private readonly Group<Agent, Navigator, Selected, Heading> _movingUnits = default;
         private DestinationType _destinationType;
         public void Tick(float delta)
         {

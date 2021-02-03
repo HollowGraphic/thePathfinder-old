@@ -1,6 +1,8 @@
+using BigBiteStudios.Logging;
 using Pixeye.Actors;
 using ThePathfinder.Components;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace ThePathfinder.Processors.Common
 {
@@ -14,10 +16,18 @@ namespace ThePathfinder.Processors.Common
             //combatants have a basic attack
             foreach (var attacker in _group)
             {
-                //if(combatant.Has<ActiveWeapon>())
+                //TODO if(combatant.Has<ActiveWeapon>())
                 //else
-                if(math.distance(attacker.transform.position, attacker.TargetComponent().Value.transform.position) < attacker.CombatantComponent().attackRange)
+                var attackerPos = attacker.transform.position;
+
+                var targetPos = attacker.TargetComponent().Value.transform.position;
+                Debug.Log(Msg.BuildWatch("Target", targetPos.ToString()));
+                Debug.Log(Msg.BuildWatch("Attacker", attackerPos.ToString()));
+                if(math.distance(attackerPos, targetPos) <= attacker.CombatantComponent().attackRange)
+                {
+                    Debug.Log("Adding Damage");
                     attacker.TargetComponent().Value.Get<HealthModifier>().value = -10;//INVESTIGATE is there a default attack damage value?
+}
                 //TODO store statmods on ents structure, then loop through them to apply mods
             }
         }
