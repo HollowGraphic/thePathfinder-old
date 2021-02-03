@@ -9,6 +9,7 @@ namespace ThePathfinder.Components
     [Serializable, HideLabel]
     public struct MaxHealth
     {
+        [LabelText("Health")]
         public float value;
     }
 

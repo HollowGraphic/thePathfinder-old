@@ -59,7 +59,7 @@ namespace ThePathfinder.Processors.Units
                     if (distance < closest) closestTarget = target;
                 }
 
-                Debug.Log(Msg.BuildWatch("Found Target", closestTarget.exist.ToString()));
+                Debug.Log(Msg.BuildWatch("Chose Target", closestTarget.exist.ToString()));
                 combatant.Get<Target>().Value = closestTarget;
                 closestTarget.Get<Predator>().Value = combatant;
             }

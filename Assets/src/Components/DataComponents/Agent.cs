@@ -5,8 +5,10 @@ using Sirenix.OdinInspector;
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct Unit
+    public struct Agent
     {
+        [LabelText("Size")]
+        public float radius;
     }
 
     #region HELPERS
@@ -15,13 +17,13 @@ namespace ThePathfinder.Components
     {
         public const string Unit = "ThePathfinder.Components.Unit";
 
-        internal static ref Unit UnitComponent(in this ent entity)
-            => ref Storage<Unit>.components[entity.id];
+        internal static ref Agent UnitComponent(in this ent entity)
+            => ref Storage<Agent>.components[entity.id];
     }
 
-    internal sealed class StorageUnit : Storage<Unit>
+    internal sealed class StorageUnit : Storage<Agent>
     {
-        public override Unit Create() => new Unit();
+        public override Agent Create() => new Agent();
 
         public override void Dispose(indexes disposed)
         {

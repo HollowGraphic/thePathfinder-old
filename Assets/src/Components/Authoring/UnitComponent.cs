@@ -7,9 +7,10 @@ namespace ThePathfinder.Components.Authoring
     /// </summary>
     public sealed class UnitComponent : AuthoringComponent
     {
+        public Agent agent;
         public override void Set(ref ent entity)
         {
-            entity.Set<Unit>();
+            entity.Set(agent);
         }
     }
 }

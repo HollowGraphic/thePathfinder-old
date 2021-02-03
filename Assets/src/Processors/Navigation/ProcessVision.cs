@@ -66,7 +66,7 @@ namespace ThePathfinder.Processors.Navigation
                         bool hasTarget = cTargets.value.Has(entity);
                         if (!entity.exist && hasTarget) cTargets.value.Remove(entity);
                         if(hasTarget) continue;
-                        Debug.Log("Adding Target");
+                        Debug.Log("Adding Potential Target");
                         cTargets.value.Add(entity);
                     }
                     else
