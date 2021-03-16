@@ -20,7 +20,7 @@ namespace ThePathfinder.Processors.Navigation
 
         [ExcludeBy(GameComponent.Arrived)]//
         private readonly Group<Navigator, Destination, DestinationQueue, VectorPath> _navigators = default;
-
+        [ExcludeBy(GameComponent.Target)]
         private readonly Group<Navigator, Arrived, Heading> _arrivedNavigators = default;
 
         public void Tick(float delta)
@@ -115,7 +115,8 @@ namespace ThePathfinder.Processors.Navigation
         public override void HandleEcsEvents()
         {
             //get the next destination in the queue
-            foreach (var entity in _navigators.removed)
+            foreach (var entity in _arrivedNavigators.added)
+            {
                 if (entity.Has<DestinationQueue>() && entity.DestinationQueueComponent().destinations.Count != 0)
                 {
                     entity.Get<Destination>() = entity.DestinationQueueComponent().destinations.Dequeue();
@@ -126,17 +127,15 @@ namespace ThePathfinder.Processors.Navigation
                     //remove heading so that they stop moving
                     if (entity.Has<Heading>()) entity.Remove<Heading>();
                     //remove move type
-                    if (entity.Has<MoveToDestination>()) entity.Remove<MoveToDestination>();
-                    if (entity.Has<AttackDestination>()) entity.Remove<AttackDestination>();
+                    if (entity.Has<Passive>()) entity.Remove<Passive>();
                     //remove path
                     entity.Remove<VectorPath>();
 
-                    //reset navigator
-                    entity.Remove<Arrived>();
+                    
+                    
                 }
-
-            foreach (var entity in _arrivedNavigators.added)   
-            {
+                //reset navigator
+                entity.Remove<Arrived>();
                 entity.Remove<Heading>();
             }
         }

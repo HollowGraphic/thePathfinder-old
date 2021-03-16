@@ -53,10 +53,22 @@ namespace ThePathfinder.Components
 
     #endregion
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DestinationType
     {
-        Default,
+        /// <summary>
+        /// Make a B line towards the destination
+        /// </summary>
+        ForceMove,
+        /// <summary>
+        /// Move to destination and attack anything on the way there
+        /// </summary>
         AttackMove,
+        /// <summary>
+        /// Destination IS a target 
+        /// </summary>
         Target
     }
 }

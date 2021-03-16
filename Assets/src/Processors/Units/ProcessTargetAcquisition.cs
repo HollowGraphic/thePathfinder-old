@@ -9,7 +9,7 @@ namespace ThePathfinder.Processors.Units
 {
     internal sealed class ProcessTargetAcquisition : Processor, ITick
     {
-        [ExcludeBy(GameComponent.Target, GameComponent.MoveToDestination)]
+        [ExcludeBy(GameComponent.Target, GameComponent.Passive)]
         private readonly Group<VisibleTargets> _needsTarget = default;
 
         private readonly Group<Target> _targetingGroup = default;
