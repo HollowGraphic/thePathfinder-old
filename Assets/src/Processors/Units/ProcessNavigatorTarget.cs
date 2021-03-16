@@ -11,8 +11,10 @@ namespace ThePathfinder.Processors.Units
     /// </summary>
     internal sealed class ProcessNavigatorTarget : Processor
     {
-        [ExcludeBy(GameComponent.MoveToDestination)]
+        [ExcludeBy(GameComponent.Passive)]
         private readonly Group<Navigator, Target, Combatant> _targetingUnits = default;
+
+        private readonly Group<Navigator, Target, Arrived> _predatorArrived = default;
 
         public override void HandleEcsEvents()
         {
@@ -30,13 +32,8 @@ namespace ThePathfinder.Processors.Units
                 float attackRange = unit.CombatantComponent().attackRange;
                 if (dir.sqrMagnitude < attackRange) continue; //we are within attack range
 
-                if (unit.Has<Destination>() &&
-                    unit.DestinationComponent().destinationType != DestinationType.Target
-                ) //handle previous destination type
-                {
-                    unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
-                }
-
+                //HACK this is wrong, it only works under certain conditions
+                unit.DestinationQueueComponent().destinations.Enqueue(unit.DestinationComponent());
                 //not within attack range, calculate new destination
                 var norm = dir.normalized;
                 var offset =
@@ -44,6 +41,21 @@ namespace ThePathfinder.Processors.Units
                 //set destination to target position, and request a path
                 unit.Get<Destination>() = new Destination(offset + targetPos, DestinationType.Target);
                 unit.Get<PathRequest>();
+            }
+            //lost/killed target
+            foreach (var unit in _targetingUnits.removed)
+            {
+                if (unit.DestinationQueueComponent().destinations.Count != 0)
+                {
+                    unit.Get<Destination>() = unit.DestinationQueueComponent().destinations.Dequeue();
+                    unit.Get<PathRequest>();
+                }
+            }
+
+            foreach (var predator in _predatorArrived.added)
+            {
+                predator.Remove<Heading>();
+                predator.Remove<Arrived>();
             }
         }
     }

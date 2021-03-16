@@ -19,6 +19,7 @@ namespace ThePathfinder.Processors.StatModding
                 else entity.HealthComponent().value = health;
                 //always remove the health mod
                 //entity.Remove<HealthModifier>();
+                //TODO store statmods on ents structure, then loop through them to apply mods
             }
         }
     }

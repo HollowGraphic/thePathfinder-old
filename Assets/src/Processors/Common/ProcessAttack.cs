@@ -28,7 +28,7 @@ namespace ThePathfinder.Processors.Common
                     Debug.Log("Adding Damage");
                     attacker.TargetComponent().Value.Get<HealthModifier>().value = -10;//INVESTIGATE is there a default attack damage value?
 }
-                //TODO store statmods on ents structure, then loop through them to apply mods
+                
             }
         }
     }

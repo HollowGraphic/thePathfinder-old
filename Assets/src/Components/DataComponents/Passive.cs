@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
-    public struct MoveToDestination//TODO generalize this (something like 'Passive'|| 'Aggressive'
+    public struct Passive//TODO generalize this (something like 'Passive'|| 'Aggressive'
     {
     }
 
@@ -17,19 +17,19 @@ namespace ThePathfinder.Components
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
     static partial class GameComponent
     {
-        public const string MoveToDestination = "ThePathfinder.Components.MoveToDestination";
+        public const string Passive = "ThePathfinder.Components.Passive";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref MoveToDestination MoveToDestinationComponent(in this ent entity) =>
-            ref Storage<MoveToDestination>.components[entity.id];
+        public static ref Passive PassiveComponent(in this ent entity) =>
+            ref Storage<Passive>.components[entity.id];
     }
 
     //[Il2CppSetOption(Option.NullChecks, false)]
     //[Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     //[Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    sealed class StorageMoveToDestination : Storage<MoveToDestination>
+    sealed class StoragePassive : Storage<Passive>
     {
-        public override MoveToDestination Create() => new MoveToDestination();
+        public override Passive Create() => new Passive();
 
         // Use for cleaning components that were removed at the current frame.
         public override void Dispose(indexes disposed)

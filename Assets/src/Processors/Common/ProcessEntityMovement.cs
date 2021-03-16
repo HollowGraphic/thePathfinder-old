@@ -31,8 +31,7 @@ namespace ThePathfinder.Processors.Common
                     //debug heading
                     Draw.Arrow(entity.transform.localPosition, entity.transform.position + (Vector3) heading.value);
                     var speedFactor = entity.Has<SpeedMod>() ? entity.SpeedModComponent().value : 1;
-                    entity.transform.position += (Vector3) heading.value * entity.MaxSpeedComponent().value *
-                                                 speedFactor * delta;
+                    entity.transform.position += (Vector3) heading.value * (entity.MaxSpeedComponent().value * speedFactor * delta);
                 }
             }
         }
