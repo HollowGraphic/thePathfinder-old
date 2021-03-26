@@ -5,7 +5,7 @@ using ThePathfinder.Components;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace ThePathfinder.Processors.Units
+namespace ThePathfinder.Game
 {
     internal sealed class ProcessTargetAcquisition : Processor, ITick
     {

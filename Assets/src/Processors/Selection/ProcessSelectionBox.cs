@@ -16,6 +16,8 @@ namespace ThePathfinder.Processors.Selection
         ProcessSelectionBox : ProcessorInput,
             ITick //, IReceive<StartBoxSelectionCommand>, IReceive<UpdateSelectionBoxCommand>, IReceive<CancelSelectingBoxCommand>
     {
+        protected override int CategoryId => Category.Selection;
+
         //settings
         private const float NearDistance = 1f;
         private const float FarDistance = 1000; //how far can we box select?
@@ -194,9 +196,5 @@ namespace ThePathfinder.Processors.Selection
             }
         }
 #endif
-        protected override int SetCategoryId()
-        {
-            return Category.Selection;
-        }
     }
 }

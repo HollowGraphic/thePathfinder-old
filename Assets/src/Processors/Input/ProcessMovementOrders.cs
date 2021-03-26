@@ -3,6 +3,8 @@ using BigBiteStudios;
 using Pixeye.Actors;
 using ThePathfinder.Components;
 using ThePathfinder.Input;
+using ThePathfinder.Game;
+using ThePathfinder.Signals.Units;
 using UnityEngine;
 
 namespace ThePathfinder.Processors.Input
@@ -10,9 +12,10 @@ namespace ThePathfinder.Processors.Input
     [Serializable]
     internal sealed class ProcessMovementOrders : ProcessorInput, ITick
     {
+        protected override int CategoryId => Category.Orders;
         private readonly Group<Agent, Navigator, Selected> _movableUnits = default;
         private readonly Group<Agent, Navigator, Selected, Heading> _movingUnits = default;
-        private DestinationType _destinationType;
+        private DestinationType _destinationType; //Investigate necessary?
 
         public void Tick(float delta)
         {
@@ -44,9 +47,9 @@ namespace ThePathfinder.Processors.Input
             {
                 _destinationType = DestinationType.ForceMove;
                 Debug.Log("Order Stop");
-                foreach (var unit in _movingUnits)
+                foreach (ent unit in _movingUnits)
                 {
-                    unit.DestinationQueueComponent().destinations.Clear();
+                    Layer.Send(new ClearOrderQueue(unit));
                     unit.Remove<Destination>();
                 }
             }
@@ -55,63 +58,12 @@ namespace ThePathfinder.Processors.Input
         private void AssignDestination(bool shouldQueue, DestinationType destinationType)
         {
             var destination = new Destination(Mouse.GetWorldPosition(), destinationType);
-            foreach (var unit in _movableUnits)
+            foreach (ent unit in _movableUnits)
             {
-                var queue = unit.DestinationQueueComponent();
-                {
-                    //Handle move types
-                    switch (destinationType)
-                    {
-                        case DestinationType.ForceMove:
-                            unit.Get<Passive>();
-                            break;
-                        case DestinationType.AttackMove:
-                            if (unit.Has<Passive>())
-                            {
-                                unit.Remove<Passive>();
-                                Debug.Log("Removing Passive");
-                            }
-
-                            //queue destination if unit already has a target, otherwise we will override their current destination (which happens to be the target position)
-                            if (unit.Has<Target>())
-                            {
-                                if (!shouldQueue)
-                                {
-                                    queue.destinations.Clear();
-                                }
-
-                                queue.destinations.Enqueue(destination);
-                                continue; //bump out
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(destinationType), destinationType, null);
-                    }
-                }
-
-                //only queue if unit already has destination
-                if (shouldQueue && unit.Has<Destination>())
-                {
-                    Debug.Log("Queue Destination");
-                    queue.destinations.Enqueue(destination);
-                    continue; // bump out to next unit
-                }
-
-                //if we are here, then we are not queueing
-
-                queue.destinations.Clear();
-
-                if (unit.Has<Arrived>()) unit.Remove<Arrived>(); //TODO In don't like this here
-                //add a destination and request a path
-                unit.Get<Destination>() = destination;
-                unit.Get<PathRequest>();
+                var moveOrder = new MoveOrder(destination);
+                //if we are here, then we want this to happen immediately
+                Layer.Send(new AssignOrder(unit, moveOrder, shouldQueue));
             }
-        }
-
-        protected override int SetCategoryId()
-        {
-            return Category.Orders;
         }
     }
 }

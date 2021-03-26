@@ -3,7 +3,7 @@ using ThePathfinder.Components.Authoring;
 
 #if UNITY_EDITOR
 using Drawing;
-using Sirenix.OdinInspector;
+
 #endif
 
 namespace ThePathfinder

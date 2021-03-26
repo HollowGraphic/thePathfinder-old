@@ -1,7 +1,6 @@
 using System;
 
 #if UNITY_EDITOR
-using Sirenix.OdinInspector;
 
 #endif
 namespace ThePathfinder

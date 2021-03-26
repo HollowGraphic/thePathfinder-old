@@ -11,6 +11,7 @@ namespace ThePathfinder.Components.Authoring
         public override void Set(ref ent entity)
         {
             entity.Set(agent);
+            entity.Set<Commandable>();
         }
     }
 }

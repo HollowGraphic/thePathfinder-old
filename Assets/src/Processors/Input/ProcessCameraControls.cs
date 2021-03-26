@@ -8,6 +8,7 @@ namespace ThePathfinder.Processors.Input
 {
     public sealed class ProcessCameraControls : ProcessorInput, ITickLate
     {
+        protected override int CategoryId => Category.Camera;
         private readonly Group<GameCamera> _cameras = default;
         private readonly Camera _camera;
 
@@ -69,11 +70,6 @@ namespace ThePathfinder.Processors.Input
                 //zoom camera
                 cameraTransform.Translate(Vector3.forward * zoomDir * cCam.zoomSpeed * delta, Space.Self);
             }
-        }
-
-        protected override int SetCategoryId()
-        {
-            return Category.Camera;
         }
     }
 }

@@ -6,14 +6,15 @@ using UnityEngine;
 
 namespace ThePathfinder.Processors.Input
 {
-    internal sealed class ProcessAbilityCommands : ProcessorInput, ITick
+    internal sealed class ProcessAbilityOrders : ProcessorInput, ITick
     {
+        protected override int CategoryId => Category.Abiltity_Map;
         private readonly Group<Combatant, Selected, Abilities> _abilityUnits = default;
         private readonly Group<PointerHover> _entityiesUnderMouse = default;
         private bool _abilityPrimed;
         private ent _primedAbility;
 
-        public ProcessAbilityCommands()
+        public ProcessAbilityOrders()
         {
             _primedAbility = Layer.Entity.Create();
         }
@@ -88,11 +89,6 @@ namespace ThePathfinder.Processors.Input
                     }
                 }
             }
-        }
-
-        protected override int SetCategoryId()
-        {
-            return Category.Abiltity_Map;
         }
     }
 }
