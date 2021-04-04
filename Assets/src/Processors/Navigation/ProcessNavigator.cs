@@ -17,12 +17,8 @@ namespace ThePathfinder.Processors.Navigation
         ///How far to look for waypoints?
         /// </summary>
         private const float NEXT_WAYPOINT_DISTANCE = .5f;
-
-        [ExcludeBy(GameComponent.Arrived)]//
         private readonly Group<Navigator, Destination, VectorPath> _navigators = default;
-        [ExcludeBy(GameComponent.Target)]
-        private readonly Group<Navigator, Arrived, Heading> _arrivedNavigators = default;
-
+        
         public void Tick(float delta)
         {
             foreach (ent unit in _navigators)
@@ -92,7 +88,6 @@ namespace ThePathfinder.Processors.Navigation
 
                 // Slow down smoothly upon approaching the end of the path and there are no more destinations queued
                 // This value will smoothly go from 1 to 0 as the agent approaches the last waypoint in the path.
-                //TODO how do we know if we need to keep our velocity as we go into the next order? it may not be a move order
                 unit.Get<SpeedMod>().value = distance < cNavigator.breakingDistance &&
                                              unit.UnitOrderQueueInfoComponent().nextOrderType == OrderType.Default
                     ? math.sqrt(distance / cNavigator.breakingDistance)
@@ -103,7 +98,7 @@ namespace ThePathfinder.Processors.Navigation
                 if (approachingFinalWaypoint && distanceToWaypoint < .1f)
                 {
                     Debug.Log(Msg.BuildWatch(unit.transform.name, "Arrived"));
-                    unit.Get<Arrived>();
+                    unit.Remove<Destination>();
                     break;
                 }
 

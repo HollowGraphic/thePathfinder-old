@@ -1,6 +1,7 @@
+using BigBiteStudios.Logging;
 using Pixeye.Actors;
 using ThePathfinder.Components;
-using ThePathfinder.Signals.Units;
+using ThePathfinder.Game.Orders;
 using UnityEngine;
 
 namespace ThePathfinder.Game
@@ -11,10 +12,10 @@ namespace ThePathfinder.Game
     internal sealed class ProcessNavigatorTarget : Processor
     {
         [ExcludeBy(GameComponent.Passive)]
-        private readonly Group<Navigator, Target, Combatant> _targetingUnits = default;
+        private readonly Group<Navigator, Target, Combatant> _navigatorsWithTargets = default;
         public override void HandleEcsEvents()
         {
-            foreach (ent unit in _targetingUnits.added)
+            foreach (ent unit in _navigatorsWithTargets.added)
             {
                 Target target = unit.TargetComponent();
                 //HACK snap position to the targets feet so that we get a better position for naving, might have to come up with a 'Feet' component
@@ -30,8 +31,9 @@ namespace ThePathfinder.Game
                 Vector3 offset =
                     norm * (attackRange - .5f); //HACK reduce attack range a fuzz so that we can be WITHIN attack range
                 //queue order 
-                Layer.Send(new AssignOrder(unit,new MoveOrder(new Destination(offset + targetPos, DestinationType.Target)), false));
-               
+                Debug.Log("Sending Order with "+ "Entity " + unit);
+                var moveOrder = new MoveOrder(unit, new Destination(offset + targetPos, DestinationType.Target));
+                Ecs.Send(new SignalAssignOrder(unit,moveOrder, QueueProcedure.QueueAhead));
             }
         }
     }

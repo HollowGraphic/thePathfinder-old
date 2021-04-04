@@ -1,14 +1,17 @@
 using Pixeye.Actors;
-using ThePathfinder.Game;
 
-namespace ThePathfinder.Signals
+namespace ThePathfinder.Game
 {
     namespace Loading
     {
         public class OverWorldLoaded{}
     }
-    namespace Units
+    namespace Orders
     {
+        public enum QueueProcedure
+        {
+            None,QueueAhead, QueueBehind
+        }
         // public class ResumeOrderQueue
         // {
         //     public readonly ent entity;
@@ -26,24 +29,23 @@ namespace ThePathfinder.Signals
         //         this.entity = entity;
         //     }
         // }
-        public class AssignOrder
+        public readonly struct SignalAssignOrder
         {
             public readonly Order order;
-            public readonly bool queueOrder;
             public readonly ent entity;
-
-            public AssignOrder(ent entity, Order order, bool queueOrder = false)
+            public readonly QueueProcedure queueProcedure;
+            public SignalAssignOrder(ent entity, Order order, QueueProcedure queueProcedure = QueueProcedure.None)
             {
                 this.entity = entity;
                 this.order = order;
-                this.queueOrder = queueOrder;
+                this.queueProcedure = queueProcedure;
             }
         }
-        public class ClearOrderQueue
+        public readonly struct SignalClearOrderQueue
         {
             public readonly ent entity;
 
-            public ClearOrderQueue(ent entity)
+            public SignalClearOrderQueue(ent entity)
             {
                 this.entity = entity;
             }

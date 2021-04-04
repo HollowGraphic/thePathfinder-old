@@ -1,3 +1,4 @@
+using Drawing;
 using Pixeye.Actors;
 
 namespace ThePathfinder.Components.Authoring
@@ -8,10 +9,12 @@ namespace ThePathfinder.Components.Authoring
     public sealed class UnitComponent : AuthoringComponent
     {
         public Agent agent;
+        
         public override void Set(ref ent entity)
         {
             entity.Set(agent);
             entity.Set<Commandable>();
         }
     }
+    
 }

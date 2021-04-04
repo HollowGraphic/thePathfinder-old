@@ -26,7 +26,7 @@ namespace ThePathfinder.Processors.Input
         }
 
         /// <summary>
-        ///     Enables maps that conflict whith this <see cref="ProcessorInput" />
+        ///     Enables maps that conflict with this <see cref="ProcessorInput" />
         /// </summary>
         protected void EnableConflictingInputs()
         {
@@ -35,8 +35,7 @@ namespace ThePathfinder.Processors.Input
 
         private void EnableMaps(bool enable)
         {
-            //flip flag
-
+            
             switch (CategoryId)
             {
                 case Category.Abiltity_Map:

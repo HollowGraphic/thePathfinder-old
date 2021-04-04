@@ -5,7 +5,7 @@ namespace ThePathfinder.Game
 {
     public enum OrderType
     {
-        Default, Movement
+        None,Default, Movement
     }
     /// <summary>
     /// Can be Sent as a signal?
@@ -13,34 +13,83 @@ namespace ThePathfinder.Game
     public abstract class Order
     {
         public OrderType orderType;
-        public bool Running { get;protected set; }
+        private readonly ent _entity;
 
- 
+        protected Order(ent entity)
+        {
+            this._entity = entity;
+        }
+
+        private bool _isRunning;
+        public bool IsRunning
+        {
+            get => _isRunning;
+
+            private set
+            {
+                _isRunning = value;
+                OnOrderStatusChanged(_entity);
+            }
+        }
+
 
         /// <summary>
         /// Perform order
         /// </summary>
-        public abstract void Activate(ref ent entity);
+        public void Activate()
+        {
+            IsRunning = true;
+        }
+        /// <summary>
+        /// Deactivates order, often when queueing order in ahead of this one
+        /// </summary>
+        public void Deactivate()
+        {
+            IsRunning = false;
+        }
+        /// <summary>
+        /// Gets called when the status of the order is changed
+        /// </summary>
+        /// <param name="entity">The <see cref="ent"/> this order is assigned to</param>
+        protected abstract void OnOrderStatusChanged(ent entity);
 
-        public abstract bool IsComplete(ref ent entity, float delta);
+        /// <summary>
+        /// Returns whether order has been completed
+        /// </summary>
+        /// <param name="delta">Delta frame time</param>
+        /// <returns></returns>
+        public bool IsComplete(float delta)
+        {
+            return RunOrder(_entity, delta);
+        }
+        /// <summary>
+        /// Gets called every frame
+        /// <remarks>Returns whether the order completed this frame</remarks>
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="delta"></param>
+        /// <returns></returns>
+        protected abstract bool RunOrder(ent entity, float delta);
+
     }
     public sealed class MoveOrder : Order
     {
         private readonly Destination _destination;
 
-        public MoveOrder(Destination destination) 
+        public MoveOrder(ent entity, Destination destination):base(entity) 
         {
             _destination = destination;
             orderType = OrderType.Movement;
         }
 
+
         /// <summary>
-        /// Happens one time
+        /// Gets called when the status of the order is changed
         /// </summary>
-        /// <param name="entity"></param>
-        public override void Activate(ref ent entity)
+        /// <param name="entity">The <see cref="ent"/> this order is assigned to</param>
+        protected override void OnOrderStatusChanged(ent entity)
         {
-            Running = true;
+            if (!IsRunning) return;
             switch (_destination.destinationType)
             {
                 case DestinationType.ForceMove:
@@ -53,12 +102,12 @@ namespace ThePathfinder.Game
                 default:
                     break;
             }
-
+            
             entity.Get<Destination>() = _destination;
             entity.Get<PathRequest>();
         }
-
-        public override bool IsComplete(ref ent entity, float delta)
+        
+        protected override bool RunOrder(ent entity,float delta)
         {
             bool completed;
             switch (_destination.destinationType)
@@ -66,7 +115,7 @@ namespace ThePathfinder.Game
                 case DestinationType.AttackMove:
                 case DestinationType.ForceMove:
                 default:
-                    completed = entity.Has<Arrived>();
+                    completed = !entity.Has<Destination>();
                     break;
                 case DestinationType.Target:
                     completed = !entity.Has<Target>(); //lost/killed target
@@ -75,9 +124,8 @@ namespace ThePathfinder.Game
 
             if (completed)
             {
-                entity.Remove<Destination>();
                 entity.Remove<Heading>();
-                entity.Remove<Arrived>();
+                if(entity.Has<Passive>()) entity.Remove<Passive>();//HACK this does not belong here, we can't assume that we can just remove the passive flag
                 return true;
             }
 
@@ -90,6 +138,8 @@ namespace ThePathfinder.Game
 
             return false;
         }
+
+
     }
 
     // public class AbilityOrder : IOrder

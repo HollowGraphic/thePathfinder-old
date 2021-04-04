@@ -7,6 +7,7 @@ using ThePathfinder.Processors.Input;
 using ThePathfinder.Processors.Navigation;
 using ThePathfinder.Processors.StatModding;
 using ThePathfinder.Game;
+using ThePathfinder.Processors.UnitCommand;
 
 namespace ThePathfinder.Layers
 {
@@ -28,7 +29,7 @@ namespace ThePathfinder.Layers
             Add<ProcessOrderQueue>();
             Add<ProcessPathRequest>();
             Add<ProcessNavigator>();
-            Add<ProcessEntityMovement>(); //TODO this should happen at the end of a frame?
+            Add<ProcessEntityMovement>(); //Investigate this should happen at the end of a frame?
 
             Add<ProcessCastAbility>();
 
