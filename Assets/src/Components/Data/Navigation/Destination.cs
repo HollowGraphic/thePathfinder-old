@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
-using UnityEngine.Serialization;
 
 namespace ThePathfinder.Components
 {

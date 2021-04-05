@@ -13,6 +13,7 @@ namespace ThePathfinder.Processors.Selection
     /// </summary>
     public sealed class ProcessPointerHover : ProcessorInput, ITick
     {
+        protected override int CategoryId => -100;
         private readonly Group<PointerBounds> _bounds = default;
 
         private readonly Group<Commander> _commanders = default;
@@ -51,11 +52,6 @@ namespace ThePathfinder.Processors.Selection
                     }
                 }
             }
-        }
-
-        protected override int SetCategoryId()
-        {
-            return -100;
         }
     }
 }

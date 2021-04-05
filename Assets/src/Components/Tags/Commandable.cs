@@ -6,13 +6,9 @@ using Sirenix.OdinInspector;
 
 namespace ThePathfinder.Components
 {
-    /// <summary>
-    /// Identifies what entity is hunting this one
-    /// </summary>
     [Serializable, HideLabel]
-    public struct Predator
+    public struct Commandable
     {
-        public ent Value;
     }
 
     #region HELPERS
@@ -22,19 +18,19 @@ namespace ThePathfinder.Components
     // [Il2CppSetOption(Option.DivideByZeroChecks, false)]
     static partial class GameComponent
     {
-        public const string Predator = "ThePathfinder.Components.Predator";
+        public const string Commandable = "ThePathfinder.Components.Commandable";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref Predator PredatorComponent(in this ent entity) =>
-            ref Storage<Predator>.components[entity.id];
+        public static ref Commandable CommandableComponent(in this ent entity) =>
+            ref Storage<Commandable>.components[entity.id];
     }
 
     // [Il2CppSetOption(Option.NullChecks, false)]
     // [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
     // [Il2CppSetOption(Option.DivideByZeroChecks, false)]
-    sealed class StorageComponentPredator : Storage<Predator>
+    sealed class StorageComponentCommandable : Storage<Commandable>
     {
-        public override Predator Create() => new Predator();
+        public override Commandable Create() => new Commandable();
 
         // Use for cleaning components that were removed at the current frame.
         public override void Dispose(indexes disposed)

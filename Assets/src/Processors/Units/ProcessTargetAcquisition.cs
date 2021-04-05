@@ -5,63 +5,60 @@ using ThePathfinder.Components;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace ThePathfinder.Processors.Units
+namespace ThePathfinder.Game
 {
     internal sealed class ProcessTargetAcquisition : Processor, ITick
     {
         [ExcludeBy(GameComponent.Target, GameComponent.Passive)]
-        private readonly Group<VisibleTargets> _needsTarget = default;
+        private readonly Group<VisibleTargets> _entitiesWithoutTargets = default;
 
-        private readonly Group<Target> _targetingGroup = default;
-        private readonly Group<Dead, Predator> _deadTargets = default;
-        public override void HandleEcsEvents()
-        {
-            //let the predator know that their prey is dead
-            foreach (var deadTarget in _deadTargets.added)
-            {
-                Debug.Log("Removing target from predator");
-                deadTarget.PredatorComponent().Value.Remove<Target>();
-            }
-        }
-
+        private readonly Group<Target> _entitiesWithTargets = default;
+        
         public void Tick(float delta)
         {
-            foreach (var combatant in _targetingGroup)
+            foreach (ent entity in _entitiesWithTargets)
             {
-                var target = combatant.TargetComponent();
-                if (!target.Value.exist)
+                Target target = entity.TargetComponent();
+                if (!target.Value.exist || target.Value.Has<Dead>())
                 {
+                    Debug.Log("Target is dead, removing");
                     //target has been destroyed, remove it
-                    combatant.Remove<Target>();
+                    entity.Remove<Target>();
                     continue; //skip to next entity
                 }
 
-                float distanceToTarget = math.distance(target.Value.transform.position, combatant.transform.position);
-                Draw.Line(combatant.transform.position, target.Value.transform.position, Color.red);
-                if (distanceToTarget > combatant.VisionComponent().range)
-                {
-                    Debug.Log("Target Lost");
-                    combatant.TargetComponent().Value.Remove<Predator>();
-                    combatant.Remove<Target>();
-                }
+                float distanceToTarget = Vector3.Distance(target.Value.transform.position, entity.transform.position);
+                Draw.Line(entity.transform.position, target.Value.transform.position, Color.red);
+                float aggroRange = entity.AggroComponent().value;
+                if (distanceToTarget < aggroRange) continue;//all good, within attack range
+                Debug.Log("Entity "+entity+" lost target");
+                Debug.Log("Entity Range: "+aggroRange+" Distance to target: " + distanceToTarget);
+                entity.Remove<Target>();
             }
 
-            foreach (var combatant in _needsTarget)
+            foreach (ent entity in _entitiesWithoutTargets)
             {
-                Debug.Log("Scoring Targets");
-                var cVisibleTargets = combatant.VisibleTargetsComponent();
+                                
+                VisibleTargets cVisibleTargets = entity.VisibleTargetsComponent();
+                Debug.Log(string.Concat("Scoring ",cVisibleTargets.value.length," Targets"));
                 if (cVisibleTargets.value.length == 0) continue;
-                var closest = float.PositiveInfinity;
+                float closestDistance = float.PositiveInfinity;
                 ent closestTarget = default;
-                foreach (var target in cVisibleTargets.value)
+                foreach (ent target in cVisibleTargets.value)
                 {
-                    var distance = math.distance(target.transform.position, combatant.transform.position);
-                    if (distance < closest) closestTarget = target;
+                    float distanceToTarget = math.distance(target.transform.position, entity.transform.position);
+                    if (distanceToTarget > closestDistance) continue;
+                    Debug.Log("Distance to target smaller than closest distance");
+                    if(distanceToTarget > entity.AggroComponent().value) continue;
+                    Debug.Log("Distance to target smaller than attack range, setting potential target");
+                    closestTarget = target;
+                    closestDistance = distanceToTarget;
                 }
 
-                Debug.Log(Msg.BuildWatch("Chose Target", closestTarget.exist.ToString()));
-                combatant.Get<Target>().Value = closestTarget;
-                closestTarget.Get<Predator>().Value = combatant;
+                if (!closestTarget.exist) continue;
+
+                Debug.Log(string.Concat("Chose Target", closestTarget.exist.ToString()));
+                entity.Get<Target>().Value = closestTarget;
             }
         }
     }

@@ -4,10 +4,10 @@ using Pathfinding;
 using Pixeye.Actors;
 using ThePathfinder.Components;
 using UnityEngine;
-
+using Time = Pixeye.Actors.Time;
 namespace ThePathfinder.Processors.Navigation
 {
-    internal sealed class ProcessPathRequest : Processor
+    public sealed class ProcessPathRequest : Processor
     {
         //INVESTIGATE shouldn't we be filtering by destination also?
         private readonly Group<PathRequest, Navigator> _pathRequesters = default;
@@ -83,6 +83,7 @@ namespace ThePathfinder.Processors.Navigation
 
                 // Reset navigator
                 requester.NavigatorComponent().currentPathNode = 0;
+                requester.NavigatorComponent().lastRepath = Time.Current;
                 requester.Remove<PathRequest>();
             }
         }

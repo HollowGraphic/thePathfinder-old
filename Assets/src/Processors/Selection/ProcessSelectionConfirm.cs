@@ -7,6 +7,7 @@ namespace ThePathfinder.Processors.Selection
 {
     public sealed class ProcessSelectionConfirm : ProcessorInput, ITick
     {
+        protected override int CategoryId => Category.Selection;
         private readonly Group<Commander> _commanders = default;
         private readonly Group<Selectable, Selected> _selected = default;
 
@@ -53,11 +54,6 @@ namespace ThePathfinder.Processors.Selection
             candidate.Remove<Selected>();
             //clean up entities
             candidate.Remove<SelectionCandidate>();
-        }
-
-        protected override int SetCategoryId()
-        {
-            return Category.Selection;
         }
     }
 }

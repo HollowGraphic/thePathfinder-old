@@ -21,29 +21,29 @@ namespace ThePathfinder.Processors.Navigation
 
         public void Tick(float delta)
         {
-            foreach (var seer in _seers)
+            foreach (ent seer in _seers)
             {
-                var cVision = seer.VisionComponent();
-                var cTargets = seer.VisibleTargetsComponent();
+                Vision cVision = seer.VisionComponent();
+                VisibleTargets cTargets = seer.VisibleTargetsComponent();
 
                 Vector3 eyePosition = (float3) seer.transform.position + math.up() * cVision.height;
 
                 //find colliders within range
-                var targetCount =
+                int targetCount =
                     Physics.OverlapSphereNonAlloc(eyePosition, cVision.range, _targetsInRange, cVision.mask);
                 if (targetCount == 0 && cTargets.value.length != 0)
-                    for (var i = 0; i < cTargets.value.length; i++)
+                    for (int i = 0; i < cTargets.value.length; i++)
                         seer.VisibleTargetsComponent().value.RemoveAt(i);
 
                 Debug.Log(Msg.BuildWatch("Found Potential Targets", targetCount.ToString()));
                 //INVESTIGATE: sort targets by distance?????
-                for (var i = 0; i < targetCount; i++)
+                for (int i = 0; i < targetCount; i++)
                 {
-                    var target = _targetsInRange[i];
-                    var dir = target.bounds.center - eyePosition;
+                    Collider targetCollider = _targetsInRange[i];
+                    Vector3 dir = targetCollider.bounds.center - eyePosition;
                     if (cVision.cone)
                     {
-                        var angle = Vector3.Angle(seer.transform.forward, dir.normalized);
+                        float angle = Vector3.Angle(seer.transform.forward, dir.normalized);
                         if (angle > cVision.angle / 2)
                         {
                             Debug.Log("Skipping");
@@ -51,23 +51,32 @@ namespace ThePathfinder.Processors.Navigation
                         }
                     }
 
-                    var ray = new Ray(eyePosition, dir);
+                    Ray ray = new Ray(eyePosition, dir);
                     //check if we can see target
-                    //INVESTIGATE: is it better to have the enmies check this themselves? Could be more performant
+                    //INVESTIGATE: is it better to have the enemies check this themselves? Could be more performant
                     //INVESTIGATE: should we try a shape cast instead?
-                    if (Physics.Raycast(ray, out var hit))
+                    if (Physics.Raycast(ray, out RaycastHit hit))
                     {
                         //we can see it
-                        if (hit.collider != target) continue;
+                        if (hit.collider != targetCollider) continue;
                         Debug.Log("Can see target");
                         Draw.Ray(ray, dir.magnitude / 2, Color.yellow);
-                        if (!target.TryGetComponent<Actor>(out var actor)) continue;//INVESTIGATE expensive?
-                        var entity = actor.entity;
-                        bool hasTarget = cTargets.value.Has(entity);
-                        if (!entity.exist && hasTarget) cTargets.value.Remove(entity);
-                        if(hasTarget) continue;
-                        Debug.Log("Adding Potential Target");
-                        cTargets.value.Add(entity);
+                        
+                        if (!targetCollider.TryGetComponent(out Actor actor)) continue;//INVESTIGATE expensive?
+                        ent targetEntity = actor.entity;
+                        bool hasTarget = cTargets.value.Has(targetEntity);
+                        bool isDead = targetEntity.Has<Dead>();
+                        
+                        //handle dead entities 
+                        if (isDead || !targetEntity.exist)
+                        {
+                            //from target list, if they happen to be in list
+                            if(hasTarget) cTargets.value.Remove(targetEntity);
+                            continue;
+                        }
+                        if(hasTarget) continue;//already has target, continue
+                        Debug.Log("Adding "+ targetEntity +" As Potential Target");
+                        cTargets.value.Add(targetEntity);
                     }
                     else
                     {

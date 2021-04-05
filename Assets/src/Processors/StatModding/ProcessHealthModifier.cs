@@ -11,12 +11,18 @@ namespace ThePathfinder.Processors.StatModding
         {
             foreach (var entity in _group)
             {
+                float currentHealth = entity.HealthComponent().value;
                 //don't go below zero
-                float mod = math.max(entity.HealthComponent().value + entity.HealthModifierComponent().value, 0);
+                float mod = math.max(currentHealth + entity.HealthModifierComponent().value, entity.MaxHealthComponent().value);
                 //don't go above max health
-                float health = math.min(mod, entity.MaxHealthComponent().value);
+                float health = math.min(mod, 0);
                 if(health == 0) entity.Get<Dead>();//kills entity
-                else entity.HealthComponent().value = health;
+                else
+                {
+                    
+                    entity.HealthComponent().value = health;
+                }
+
                 //always remove the health mod
                 //entity.Remove<HealthModifier>();
                 //TODO store statmods on ents structure, then loop through them to apply mods

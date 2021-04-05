@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Pathfinding;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
@@ -23,7 +22,7 @@ namespace ThePathfinder.Components.Authoring
             entity.Set(maxSpeed);
             entity.Set(rotationSpeed);
             //entity.Set(new VectorPath());
-            entity.Set<DestinationQueue>().destinations = new Queue<Destination>(20);
+            
         }
 
 #if UNITY_EDITOR

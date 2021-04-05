@@ -1,7 +1,6 @@
 using System.Globalization;
 using BigBiteStudios.Logging;
 using Pixeye.Actors;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring

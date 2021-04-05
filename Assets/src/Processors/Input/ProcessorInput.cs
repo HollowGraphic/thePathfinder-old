@@ -6,26 +6,19 @@ namespace ThePathfinder.Processors.Input
 {
     public abstract class ProcessorInput : Processor
     {
-        protected static Mouse Mouse;
-        protected static Player Player;
-        private readonly int _categoryId;
+        protected readonly Mouse Mouse;
+        protected readonly Player Player;
+        protected abstract int CategoryId { get;}
 
-        public ProcessorInput()
+        protected ProcessorInput()
         {
             Mouse = ReInput.controllers.Mouse;
             Player = ReInput.players.GetPlayer(Players.Player0);
-            // ReSharper disable once VirtualMemberCallInConstructor
-            _categoryId = SetCategoryId();
+            
         }
 
         /// <summary>
-        ///     Set the category id that will be used to determine which inputs to disable
-        /// </summary>
-        /// <param name="id"></param>
-        protected abstract int SetCategoryId();
-
-        /// <summary>
-        ///     Disables maps that conflict whith this <see cref="ProcessorInput" />
+        ///Disables maps that conflict whith this <see cref="ProcessorInput" />
         /// </summary>
         protected void DisableConflictingInputs()
         {
@@ -33,7 +26,7 @@ namespace ThePathfinder.Processors.Input
         }
 
         /// <summary>
-        ///     Enables maps that conflict whith this <see cref="ProcessorInput" />
+        ///     Enables maps that conflict with this <see cref="ProcessorInput" />
         /// </summary>
         protected void EnableConflictingInputs()
         {
@@ -42,9 +35,8 @@ namespace ThePathfinder.Processors.Input
 
         private void EnableMaps(bool enable)
         {
-            //flip flag
-
-            switch (_categoryId)
+            
+            switch (CategoryId)
             {
                 case Category.Abiltity_Map:
                     Player.controllers.maps.SetMapsEnabled(enable, Category.Selection);
