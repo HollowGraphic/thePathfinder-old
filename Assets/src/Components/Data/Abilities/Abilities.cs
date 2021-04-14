@@ -9,7 +9,7 @@ namespace ThePathfinder.Components
     [Serializable, HideLabel]
     public struct Abilities
     {
-        public Dictionary<int, ent> Value;
+        public Dictionary<int, ent> value;
     }
 
     #region HELPERS

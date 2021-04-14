@@ -21,7 +21,7 @@ namespace ThePathfinder.Processors.Input
 
         public void Tick(float delta)
         {
-            //cast only if we have an abiilty primed
+            //cast only if we have an ability primed
             if (_abilityPrimed && Player.GetButtonDown(ActionId.Ability_Cast))
             {
                 //fill out the required fields before casting
@@ -65,7 +65,7 @@ namespace ThePathfinder.Processors.Input
                 {
                     this.Log("We have units with abilities");
                     var availableAbilities = unit.Get<Abilities>();
-                    if (availableAbilities.Value.TryGetValue(abilityId, out var ability))
+                    if (availableAbilities.value.TryGetValue(abilityId, out var ability))
                     {
                         if (ability.Has<InstaCast>()) //can we cast it right away?
                         {

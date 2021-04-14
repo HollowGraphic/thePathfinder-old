@@ -18,7 +18,15 @@ namespace ThePathfinder.Processors.Navigation
         /// </summary>
         private const float NEXT_WAYPOINT_DISTANCE = .5f;
         private readonly Group<Navigator, Destination, VectorPath> _navigators = default;
-        
+
+        public override void HandleEcsEvents()
+        {
+            foreach (ent entity in _navigators.removed)
+            {
+                if(entity.Has<Heading>()) entity.Remove<Heading>();// A navigator with no destination should have no heading?
+            }
+        }
+
         public void Tick(float delta)
         {
             foreach (ent unit in _navigators)

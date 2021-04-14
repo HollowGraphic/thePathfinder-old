@@ -20,8 +20,8 @@ namespace ThePathfinder.Layers
             //^IMPORTANT all above this line
             
             Add<ProcessDeadEntity>();
+            /////////////////INPUT////////////////////////
             Add<ProcessSelectionBox>();
-
             Add<ProcessPointerHover>();
             Add<ProcessSelectionConfirm>();
             Add<ProcessMovementOrders>();
@@ -29,16 +29,19 @@ namespace ThePathfinder.Layers
             Add<ProcessOrderQueue>();
             Add<ProcessPathRequest>();
             Add<ProcessNavigator>();
-            Add<ProcessEntityMovement>(); //Investigate this should happen at the end of a frame?
 
             Add<ProcessCastAbility>();
 
             Add<ProcessVision>();
             Add<ProcessTargetAcquisition>();
             Add<ProcessNavigatorTarget>();
+            Add<ProcessEntityHeading>();
             ////////////////////////////////////////
             Add<ProcessAttack>();
             Add<ProcessHealthModifier>();
+            ////////////////MOVEMENT////////////////////////
+            Add<ProcessEntityRotation>();
+            Add<ProcessEntityTranslation>(); //Investigate this should happen at the end of a frame?
         }
 
         // Use to clean up custom stuff before the layer gets destroyed.

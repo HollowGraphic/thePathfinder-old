@@ -1,3 +1,4 @@
+using System;
 using Pathfinding;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
@@ -10,26 +11,20 @@ namespace ThePathfinder.Components.Authoring
     public class NavigatorComponent : AuthoringComponent
     {
         [SerializeField] private Navigator navigator;
-        [SerializeField] private Mover mover;
+        [SerializeField] private Translator translator;
         [SerializeField] private MaxSpeed maxSpeed;
-        [FormerlySerializedAs("_rotationSpeed")] [SerializeField, ShowIf("CanRotate")] private RotationSpeed rotationSpeed;
+        [SerializeField] private Rotator rotator;
 
         public override void Set(ref ent entity)
         {
-            mover.canMove = true;
+            translator.canMove = true;
             entity.Set(navigator);
-            entity.Set(mover);
+            entity.Set(translator);
             entity.Set(maxSpeed);
-            entity.Set(rotationSpeed);
+            if(rotator.canRotate)
+                entity.Set(rotator);
             //entity.Set(new VectorPath());
             
         }
-
-#if UNITY_EDITOR
-        bool CanRotate()
-        {
-            return mover.canRotate;
-        }
-#endif
     }
 }

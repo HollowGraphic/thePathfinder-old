@@ -58,11 +58,13 @@ namespace ThePathfinder.Processors.Input
         private void AssignDestination(bool shouldQueue, DestinationType destinationType)
         {
             Debug.Log("Sending Move Order");
+            QueueProcedure queueProcedure = shouldQueue ? QueueProcedure.QueueBehind : QueueProcedure.None;
+            //find if we happen to click on a damageable entity
             var destination = new Destination(Mouse.GetWorldPosition(), destinationType);
             foreach (ent unit in _movableUnits)
             {
                 var moveOrder = new MoveOrder(unit, destination);
-                Ecs.Send(new SignalAssignOrder(unit, moveOrder,QueueProcedure.QueueBehind));
+                Ecs.Send(new SignalAssignOrder(unit, moveOrder,queueProcedure));
             }
         }
     }

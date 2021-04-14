@@ -18,7 +18,7 @@ namespace ThePathfinder.Processors.Input
         }
 
         /// <summary>
-        ///Disables maps that conflict whith this <see cref="ProcessorInput" />
+        ///Disables maps that conflict with this <see cref="ProcessorInput" />
         /// </summary>
         protected void DisableConflictingInputs()
         {

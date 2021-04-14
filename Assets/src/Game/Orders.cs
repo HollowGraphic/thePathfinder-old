@@ -5,30 +5,64 @@ namespace ThePathfinder.Game
 {
     public enum OrderType
     {
-        None,Default, Movement
+        None,
+        Default,
+        Movement
     }
-    /// <summary>
-    /// Can be Sent as a signal?
-    /// </summary>
-    public abstract class Order
-    {
-        public OrderType orderType;
-        private readonly ent _entity;
 
-        protected Order(ent entity)
+    public interface IOrder
+    {
+        /// <summary>
+        /// What type of order it is
+        /// </summary>
+        public OrderType OrderType { get; }
+        /// <summary>
+        /// Indicates whether order has been activated
+        /// </summary>
+        public bool IsActivated { get; }
+        /// <summary>
+        /// Indicates whether order has completed it's task
+        /// </summary>
+        public bool IsComplete { get; }
+        /// <summary>
+        /// Activate order
+        /// </summary>
+        public void Activate();
+        /// <summary>
+        /// Activate order
+        /// </summary>
+        public void Deactivate();
+        /// <summary>
+        /// Run Order
+        /// </summary>
+        /// <param name="delta"></param>
+        public void Run(float delta);
+    }
+
+    /// <summary>
+    /// Base for all orders
+    /// </summary>
+    public abstract class Order : IOrder
+    {
+        public OrderType OrderType { get; }
+        private readonly ent _entity;
+        private bool _isRunning;
+
+        protected Order(ent entity, OrderType orderType)
         {
-            this._entity = entity;
+            _entity = entity;
+            OrderType = orderType;
         }
 
-        private bool _isRunning;
-        public bool IsRunning
+
+        public bool IsActivated
         {
             get => _isRunning;
 
             private set
             {
                 _isRunning = value;
-                OnOrderStatusChanged(_entity);
+                OnActivationStatusChanged(_entity, value);
             }
         }
 
@@ -38,30 +72,46 @@ namespace ThePathfinder.Game
         /// </summary>
         public void Activate()
         {
-            IsRunning = true;
+            IsActivated = true;
         }
+
         /// <summary>
         /// Deactivates order, often when queueing order in ahead of this one
         /// </summary>
         public void Deactivate()
         {
-            IsRunning = false;
+            IsActivated = false;
         }
         /// <summary>
-        /// Gets called when the status of the order is changed
+        /// Runs <see cref="Order"/>
         /// </summary>
+        /// <param name="delta"></param>
+        public void Run(float delta)
+        {
+            OnRun(_entity, delta);
+        }
+
+        /// <summary>
+        /// Gets called when the activated status of the order is changed
+        /// </summary>
+        /// <remarks>Useful for long running orders</remarks>
         /// <param name="entity">The <see cref="ent"/> this order is assigned to</param>
-        protected abstract void OnOrderStatusChanged(ent entity);
+        /// <param name="isActivated">Activation status</param>
+        protected abstract void OnActivationStatusChanged(ent entity, bool isActivated);
 
         /// <summary>
         /// Returns whether order has been completed
         /// </summary>
-        /// <param name="delta">Delta frame time</param>
-        /// <returns></returns>
-        public bool IsComplete(float delta)
+        public bool IsComplete
         {
-            return RunOrder(_entity, delta);
+            get
+            {
+                bool completed = OnCheckIfComplete(_entity);
+                if(completed) OnCompleted(_entity);
+                return completed;
+            }
         }
+
         /// <summary>
         /// Gets called every frame
         /// <remarks>Returns whether the order completed this frame</remarks>
@@ -69,27 +119,39 @@ namespace ThePathfinder.Game
         /// <param name="entity"></param>
         /// <param name="delta"></param>
         /// <returns></returns>
-        protected abstract bool RunOrder(ent entity, float delta);
+        protected virtual void OnRun(ent entity, float delta){}
 
+        /// <summary>
+        /// Performs complete check
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected abstract bool OnCheckIfComplete(ent entity);
+
+        /// <summary>
+        /// Called when order has completed
+        /// </summary>
+        protected virtual void OnCompleted(ent entity)
+        {
+            
+        }
+        
     }
+
     public sealed class MoveOrder : Order
     {
         private readonly Destination _destination;
 
-        public MoveOrder(ent entity, Destination destination):base(entity) 
+        public MoveOrder(ent entity, Destination destination) : base(entity,
+            OrderType.Movement)
         {
             _destination = destination;
-            orderType = OrderType.Movement;
         }
 
 
-        /// <summary>
-        /// Gets called when the status of the order is changed
-        /// </summary>
-        /// <param name="entity">The <see cref="ent"/> this order is assigned to</param>
-        protected override void OnOrderStatusChanged(ent entity)
+        protected override void OnActivationStatusChanged(ent entity, bool isActivated)
         {
-            if (!IsRunning) return;
+            if (!isActivated) return;
             switch (_destination.destinationType)
             {
                 case DestinationType.ForceMove:
@@ -102,53 +164,56 @@ namespace ThePathfinder.Game
                 default:
                     break;
             }
-            
+
             entity.Get<Destination>() = _destination;
             entity.Get<PathRequest>();
         }
-        
-        protected override bool RunOrder(ent entity,float delta)
+
+
+        protected  override void OnRun(ent entity, float delta)
         {
-            bool completed;
+
+            float currentTIme = Time.Current;
+            if (!(currentTIme >
+                  entity.NavigatorComponent().lastRepath + entity.NavigatorComponent().repathRate)) return;
+
+            entity.NavigatorComponent().lastRepath = currentTIme;
+            entity.Get<PathRequest>();
+        }
+
+        protected override bool OnCheckIfComplete(ent entity)
+        {
             switch (_destination.destinationType)
             {
                 case DestinationType.AttackMove:
                 case DestinationType.ForceMove:
                 default:
-                    completed = !entity.Has<Destination>();
-                    break;
+                    return !entity.Has<Destination>();
                 case DestinationType.Target:
-                    completed = !entity.Has<Target>(); //lost/killed target
-                    break;
+                    return !entity.Has<Target>(); //lost/killed target
             }
-
-            if (completed)
-            {
-                entity.Remove<Heading>();
-                if(entity.Has<Passive>()) entity.Remove<Passive>();//HACK this does not belong here, we can't assume that we can just remove the passive flag
-                return true;
-            }
-
-            float currentTIme = Time.Current;
-            if (!(currentTIme >
-                  entity.NavigatorComponent().lastRepath + entity.NavigatorComponent().repathRate)) return false;
-            
-            entity.NavigatorComponent().lastRepath = currentTIme;
-            entity.Get<PathRequest>();
-
-            return false;
         }
-
-
     }
 
-    // public class AbilityOrder : IOrder
-    // {
-    //     public Vector3 Location;
-    //     public int AbilityId;
-    //     public void Perform(ref ent entity)
-    //     {
-    //         throw new NotImplementedException();
-    //     }
-    // }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AbilityOrder : Order
+    {
+        private ent _ability;
+        public AbilityOrder(ent entity,ent ability, OrderType orderType) : base(entity, orderType)
+        {
+            _ability = ability;
+        }
+
+        protected override void OnActivationStatusChanged(ent entity, bool isActivated)
+        {
+            _ability.Get<Cast>();
+        }
+
+        protected override bool OnCheckIfComplete(ent entity)
+        {
+            return true;
+        }
+    }
 }

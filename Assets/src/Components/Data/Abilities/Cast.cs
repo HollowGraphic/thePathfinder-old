@@ -5,6 +5,9 @@ using Sirenix.OdinInspector;
 
 namespace ThePathfinder.Components
 {
+    /// <summary>
+    /// Tells entity to cast ability
+    /// </summary>
     [Serializable, HideLabel]
     public struct Cast
     {

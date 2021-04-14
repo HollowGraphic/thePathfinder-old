@@ -5,6 +5,9 @@ using Sirenix.OdinInspector;
 
 namespace ThePathfinder.Components
 {
+    /// <summary>
+    /// Assigns a target to entity
+    /// </summary>
     [Serializable, HideLabel]
     public struct Target
     {

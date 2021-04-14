@@ -11,8 +11,9 @@ namespace ThePathfinder.Game
     /// </summary>
     internal sealed class ProcessNavigatorTarget : Processor
     {
-        [ExcludeBy(GameComponent.Passive)]
+        //[ExcludeBy(GameComponent.Passive)]
         private readonly Group<Navigator, Target, Combatant> _navigatorsWithTargets = default;
+        
         public override void HandleEcsEvents()
         {
             foreach (ent unit in _navigatorsWithTargets.added)
@@ -34,6 +35,11 @@ namespace ThePathfinder.Game
                 Debug.Log("Sending Order with "+ "Entity " + unit);
                 var moveOrder = new MoveOrder(unit, new Destination(offset + targetPos, DestinationType.Target));
                 Ecs.Send(new SignalAssignOrder(unit,moveOrder, QueueProcedure.QueueAhead));
+            }
+
+            foreach (ent unit in _navigatorsWithTargets.removed)
+            {
+                if(unit.Has<Destination>() && unit.DestinationComponent().destinationType == DestinationType.Target) unit.Remove<Destination>();
             }
         }
     }

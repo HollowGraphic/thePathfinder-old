@@ -12,8 +12,8 @@ namespace ThePathfinder.Processors.UnitCommand
 {
     public sealed class ProcessOrderQueue : Processor<SignalAssignOrder, SignalClearOrderQueue>, ITick
     {
-        private readonly Dictionary<ent, LinkedList<Order>> _entityOrderQueues =
-            new Dictionary<ent, LinkedList<Order>>(10);
+        private readonly Dictionary<ent, LinkedList<IOrder>> _entityOrderQueues =
+            new Dictionary<ent, LinkedList<IOrder>>(10);
 
         private readonly Group<Commandable> _commandableGroup = default;
         private const int QUEUE_CAPACITY = 20;
@@ -42,7 +42,7 @@ namespace ThePathfinder.Processors.UnitCommand
             foreach (ent commandableEntity in _commandableGroup.added)
             {
                 Debug.Log("Added Commandable to Dictionary");
-                _entityOrderQueues.Add(commandableEntity, new LinkedList<Order>());
+                _entityOrderQueues.Add(commandableEntity, new LinkedList<IOrder>());
             }
 
             //they get removed when they are destroyed
@@ -54,22 +54,25 @@ namespace ThePathfinder.Processors.UnitCommand
 
         public void Tick(float delta)
         {
-            foreach (KeyValuePair<ent, LinkedList<Order>> pair in _entityOrderQueues)
+            foreach (KeyValuePair<ent, LinkedList<IOrder>> pair in _entityOrderQueues)
             {
-                LinkedList<Order> orders = pair.Value;
+                LinkedList<IOrder> orders = pair.Value;
                 ent entity = pair.Key;
                 if (orders.Count == 0) continue;
-                Order currentOrder = orders.First.Value;
+                IOrder currentOrder = orders.First.Value;
                 Draw.Label2D(entity.transform.position, string.Concat("Order Count", orders.Count.ToString()));
-                if (!currentOrder.IsRunning)
+                if (!currentOrder.IsActivated)
                 {
                     currentOrder.Activate();
                     //if there is a next order, cache order type, otherwise set to none
                     entity.UnitOrderQueueInfoComponent().nextOrderType =
-                        orders.First.Next?.Value.orderType ?? OrderType.None; 
+                        orders.First.Next?.Value.OrderType ?? OrderType.None; 
                 }
 
-                if (!currentOrder.IsComplete(delta)) continue;
+                if (!currentOrder.IsComplete)
+                {
+                    currentOrder.Run(delta); continue;
+                }
                 orders.RemoveFirst(); //remove old one
             }
         }
@@ -78,9 +81,9 @@ namespace ThePathfinder.Processors.UnitCommand
         {
             Debug.Log("Received Order to Assign");
             Order order = signal.order;
-            if (_entityOrderQueues.TryGetValue(signal.entity, out LinkedList<Order> orders))
+            if (_entityOrderQueues.TryGetValue(signal.entity, out LinkedList<IOrder> orders))
             {
-                LinkedListNode<Order> first = orders.First;
+                LinkedListNode<IOrder> first = orders.First;
                 if (orders.Count == 0)
                 {
                     orders.AddFirst(order);
