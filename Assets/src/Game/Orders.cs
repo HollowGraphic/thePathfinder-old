@@ -193,6 +193,7 @@ namespace ThePathfinder.Game
                     return !entity.Has<Target>(); //lost/killed target
             }
         }
+        
     }
 
     /// <summary>

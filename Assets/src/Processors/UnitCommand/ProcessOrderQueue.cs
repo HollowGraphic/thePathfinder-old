@@ -43,6 +43,8 @@ namespace ThePathfinder.Processors.UnitCommand
             {
                 Debug.Log("Added Commandable to Dictionary");
                 _entityOrderQueues.Add(commandableEntity, new LinkedList<IOrder>());
+                
+                
             }
 
             //they get removed when they are destroyed

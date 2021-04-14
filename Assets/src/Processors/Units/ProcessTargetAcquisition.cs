@@ -11,7 +11,7 @@ namespace ThePathfinder.Game
     {
         [ExcludeBy(GameComponent.Target, GameComponent.Passive)]
         private readonly Group<VisibleTargets> _entitiesWithoutTargets = default;
-
+        [ExcludeBy(GameComponent.Passive)]
         private readonly Group<Target> _entitiesWithTargets = default;
         
         public void Tick(float delta)
@@ -59,6 +59,14 @@ namespace ThePathfinder.Game
 
                 Debug.Log(string.Concat("Chose Target", closestTarget.exist.ToString()));
                 entity.Get<Target>().Value = closestTarget;
+            }
+        }
+
+        public override void HandleEcsEvents()
+        {
+            foreach (ent entity in _entitiesWithTargets.removed)
+            {
+                if(entity.Has<Target>()) entity.Remove<Target>();
             }
         }
     }
