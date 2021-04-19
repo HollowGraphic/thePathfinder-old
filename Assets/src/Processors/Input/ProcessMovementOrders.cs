@@ -10,7 +10,7 @@ using UnityEngine;
 namespace ThePathfinder.Processors.Input
 {
     [Serializable]
-    internal sealed class ProcessMovementOrders : ProcessorInput, ITick
+    internal sealed class ProcessMovementOrders : ProcessInput, ITick
     {
         protected override int CategoryId => Category.Orders;
         private readonly Group<Agent, Navigator, Selected> _movableUnits = default;
@@ -64,7 +64,7 @@ namespace ThePathfinder.Processors.Input
             foreach (ent unit in _movableUnits)
             {
                 var moveOrder = new MoveOrder(unit, destination);
-                Ecs.Send(new SignalAssignOrder(unit, moveOrder,queueProcedure));
+                Ecs.Send(new SignalAssignOrder(unit, moveOrder,true,queueProcedure));
             }
         }
     }

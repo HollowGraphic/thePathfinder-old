@@ -43,8 +43,6 @@ namespace ThePathfinder.Processors.UnitCommand
             {
                 Debug.Log("Added Commandable to Dictionary");
                 _entityOrderQueues.Add(commandableEntity, new LinkedList<IOrder>());
-                
-                
             }
 
             //they get removed when they are destroyed
@@ -63,9 +61,9 @@ namespace ThePathfinder.Processors.UnitCommand
                 if (orders.Count == 0) continue;
                 IOrder currentOrder = orders.First.Value;
                 Draw.Label2D(entity.transform.position, string.Concat("Order Count", orders.Count.ToString()));
-                if (!currentOrder.IsActivated)
+                if (!currentOrder.IsRunning)
                 {
-                    currentOrder.Activate();
+                    currentOrder.Start();
                     //if there is a next order, cache order type, otherwise set to none
                     entity.UnitOrderQueueInfoComponent().nextOrderType =
                         orders.First.Next?.Value.OrderType ?? OrderType.None; 
@@ -73,7 +71,7 @@ namespace ThePathfinder.Processors.UnitCommand
 
                 if (!currentOrder.IsComplete)
                 {
-                    currentOrder.Run(delta); continue;
+                    currentOrder.Execute(delta); continue;
                 }
                 orders.RemoveFirst(); //remove old one
             }
@@ -82,18 +80,22 @@ namespace ThePathfinder.Processors.UnitCommand
         public override void ReceiveEcs(ref SignalAssignOrder signal, ref bool stopSignal)
         {
             Debug.Log("Received Order to Assign");
-            Order order = signal.order;
+            IOrder order = signal.order;
             if (_entityOrderQueues.TryGetValue(signal.entity, out LinkedList<IOrder> orders))
             {
-                LinkedListNode<IOrder> first = orders.First;
+                LinkedListNode<IOrder> current = orders.First;
                 if (orders.Count == 0)
                 {
                     orders.AddFirst(order);
                     return;
                 }
+                //if(signal.interruptQueue && current.Value.IsRunning && !current.Value.IsComplete)
+                    
+                //INVESTIGATE what about orders/abilities that are long running and should not be canceled? Like a heal overtime?
                 switch (signal.queueProcedure)
                 {
                     case QueueProcedure.None:
+                        current.Value.Halt();
                         orders.Clear();
                         orders.AddFirst(order);
                         break;
@@ -101,8 +103,8 @@ namespace ThePathfinder.Processors.UnitCommand
                         orders.AddAfter(orders.Last, order);
                         break;
                     case QueueProcedure.QueueAhead:
-                        first.Value.Deactivate();
-                        orders.AddBefore(first, order);
+                        current.Value.Halt();
+                        orders.AddBefore(current, order);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

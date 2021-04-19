@@ -25,6 +25,7 @@ namespace ThePathfinder.Layers
             Add<ProcessPointerHover>();
             Add<ProcessSelectionConfirm>();
             Add<ProcessMovementOrders>();
+            Add<ProcessAbilityOrders>();
             
             Add<ProcessOrderQueue>();
             Add<ProcessPathRequest>();

@@ -16,17 +16,3 @@ namespace ThePathfinder.Components.Authoring
         }
     }
 }
-
-public interface IAbility
-{
-    public void Perform();
-}
-
-public class FireBall : IAbility
-{
-    public string RefToAbilityPrefab;
-    public void Perform()
-    {
-        
-    }
-}

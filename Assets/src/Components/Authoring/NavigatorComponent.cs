@@ -1,9 +1,7 @@
-using System;
+using Drawing;
 using Pathfinding;
 using Pixeye.Actors;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization; //using ThePathfinder.Processors.Navigation;
 
 namespace ThePathfinder.Components.Authoring
 {
@@ -14,7 +12,7 @@ namespace ThePathfinder.Components.Authoring
         [SerializeField] private Translator translator;
         [SerializeField] private MaxSpeed maxSpeed;
         [SerializeField] private Rotator rotator;
-
+        public float range;
         public override void Set(ref ent entity)
         {
             translator.canMove = true;
@@ -23,8 +21,12 @@ namespace ThePathfinder.Components.Authoring
             entity.Set(maxSpeed);
             if(rotator.canRotate)
                 entity.Set(rotator);
-            //entity.Set(new VectorPath());
-            
+        }
+
+        public override void DrawGizmos()
+        {
+                        Vector3 randomDir = BigBiteStudios.VectorHelpers.GetRandomDirectionCircle(range);
+                        Draw.Arrow(Vector3.zero, randomDir);
         }
     }
 }

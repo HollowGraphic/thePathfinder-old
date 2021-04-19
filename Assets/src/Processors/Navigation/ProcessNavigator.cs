@@ -23,7 +23,7 @@ namespace ThePathfinder.Processors.Navigation
         {
             foreach (ent entity in _navigators.removed)
             {
-                if(entity.Has<Heading>()) entity.Remove<Heading>();// A navigator with no destination should have no heading?
+                if(entity.Has<Heading>()) entity.Remove<Heading>();//INVESTIGATE A navigator with no destination should have no heading?
             }
         }
 

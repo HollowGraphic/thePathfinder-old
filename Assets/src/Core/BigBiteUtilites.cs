@@ -1,8 +1,16 @@
 using UnityEngine;
 using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 namespace BigBiteStudios
 {
+    public static class VectorHelpers
+    {
+        public static Vector3 GetRandomDirectionCircle(float range)
+        {
+            return new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range)).normalized;
+        }
+    }
     public static class Geometry
     {
         public static Vector3 Plane3Intersect(Plane p1, Plane p2, Plane p3)

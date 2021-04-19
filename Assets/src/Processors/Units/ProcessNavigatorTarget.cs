@@ -32,9 +32,9 @@ namespace ThePathfinder.Game
                 Vector3 offset =
                     norm * (attackRange - .5f); //HACK reduce attack range a fuzz so that we can be WITHIN attack range
                 //queue order 
-                Debug.Log("Sending Order with "+ "Entity " + unit);
+                Debug.Log("Attacking Target. "+ "Entity " + unit);
                 var moveOrder = new MoveOrder(unit, new Destination(offset + targetPos, DestinationType.Target));
-                Ecs.Send(new SignalAssignOrder(unit,moveOrder, QueueProcedure.QueueAhead));
+                Ecs.Send(new SignalAssignOrder(unit,moveOrder, true,QueueProcedure.QueueAhead));
             }
 
             foreach (ent unit in _navigatorsWithTargets.removed)

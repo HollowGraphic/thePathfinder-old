@@ -12,6 +12,7 @@ namespace ThePathfinder.Processors.Casting
 
         public void Tick(float delta)
         {
+            
         }
 
         public override void HandleEcsEvents()

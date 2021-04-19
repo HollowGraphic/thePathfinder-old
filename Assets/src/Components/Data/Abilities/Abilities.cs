@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Pixeye.Actors;
 using Sirenix.OdinInspector;
+using ThePathfinder.Game.Abilities;
 
 namespace ThePathfinder.Components
 {
     [Serializable, HideLabel]
     public struct Abilities
     {
-        public Dictionary<int, ent> value;
+        public Dictionary<int, IAbility> value;
+
+        public Abilities(int capacity)
+        {
+            value = new Dictionary<int, IAbility>(capacity);
+        }
+
+        public Abilities(Dictionary<int,IAbility> abilities)
+        {
+            value = abilities;
+        }
     }
 
     #region HELPERS

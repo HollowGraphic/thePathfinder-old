@@ -13,7 +13,7 @@ using Drawing;
 namespace ThePathfinder.Processors.Selection
 {
     public sealed class
-        ProcessSelectionBox : ProcessorInput,
+        ProcessSelectionBox : ProcessInput,
             ITick //, IReceive<StartBoxSelectionCommand>, IReceive<UpdateSelectionBoxCommand>, IReceive<CancelSelectingBoxCommand>
     {
         protected override int CategoryId => Category.Selection;

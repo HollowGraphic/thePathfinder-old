@@ -4,13 +4,13 @@ using ThePathfinder.Input;
 
 namespace ThePathfinder.Processors.Input
 {
-    public abstract class ProcessorInput : Processor
+    public abstract class ProcessInput : Processor
     {
         protected readonly Mouse Mouse;
         protected readonly Player Player;
         protected abstract int CategoryId { get;}
 
-        protected ProcessorInput()
+        protected ProcessInput()
         {
             Mouse = ReInput.controllers.Mouse;
             Player = ReInput.players.GetPlayer(Players.Player0);
@@ -18,7 +18,7 @@ namespace ThePathfinder.Processors.Input
         }
 
         /// <summary>
-        ///Disables maps that conflict with this <see cref="ProcessorInput" />
+        ///Disables maps that conflict with this <see cref="ProcessInput" />
         /// </summary>
         protected void DisableConflictingInputs()
         {
@@ -26,7 +26,7 @@ namespace ThePathfinder.Processors.Input
         }
 
         /// <summary>
-        ///     Enables maps that conflict with this <see cref="ProcessorInput" />
+        ///     Enables maps that conflict with this <see cref="ProcessInput" />
         /// </summary>
         protected void EnableConflictingInputs()
         {

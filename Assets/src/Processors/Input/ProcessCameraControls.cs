@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ThePathfinder.Processors.Input
 {
-    public sealed class ProcessCameraControls : ProcessorInput, ITickLate
+    public sealed class ProcessCameraControls : ProcessInput, ITickLate
     {
         protected override int CategoryId => Category.Camera;
         private readonly Group<GameCamera> _cameras = default;

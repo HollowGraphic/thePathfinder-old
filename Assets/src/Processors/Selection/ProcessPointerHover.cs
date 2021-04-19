@@ -11,7 +11,7 @@ namespace ThePathfinder.Processors.Selection
     /// <summary>
     ///     Handles the pointer hovering over entities
     /// </summary>
-    public sealed class ProcessPointerHover : ProcessorInput, ITick
+    public sealed class ProcessPointerHover : ProcessInput, ITick
     {
         protected override int CategoryId => -100;
         private readonly Group<PointerBounds> _bounds = default;

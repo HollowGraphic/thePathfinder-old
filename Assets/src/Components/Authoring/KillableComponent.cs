@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ThePathfinder.Components.Authoring
 {
-    public sealed class Killable : AuthoringComponent
+    public sealed class KillableComponent : AuthoringComponent
     {
         [SerializeField]
         private MaxHealth maxHealth;

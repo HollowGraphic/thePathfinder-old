@@ -5,7 +5,7 @@ using ThePathfinder.Processors.Input;
 
 namespace ThePathfinder.Processors.Selection
 {
-    public sealed class ProcessSelectionConfirm : ProcessorInput, ITick
+    public sealed class ProcessSelectionConfirm : ProcessInput, ITick
     {
         protected override int CategoryId => Category.Selection;
         private readonly Group<Commander> _commanders = default;

@@ -31,13 +31,15 @@ namespace ThePathfinder.Game
         // }
         public readonly struct SignalAssignOrder
         {
-            public readonly Order order;
+            public readonly IOrder order;
             public readonly ent entity;
             public readonly QueueProcedure queueProcedure;
-            public SignalAssignOrder(ent entity, Order order, QueueProcedure queueProcedure = QueueProcedure.None)
+            public readonly bool interruptQueue;
+            public SignalAssignOrder(ent entity, IOrder order, bool interruptQueue, QueueProcedure queueProcedure = QueueProcedure.None)
             {
                 this.entity = entity;
                 this.order = order;
+                this.interruptQueue = interruptQueue;
                 this.queueProcedure = queueProcedure;
             }
         }
